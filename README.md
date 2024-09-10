@@ -9,6 +9,7 @@
 - **Bypass Privilege for Exclusions**: Utilizes Event 5007 to bypass the protected list in MDE.  
   
 <br />
+
 ![image](https://github.com/user-attachments/assets/a26c305c-0b55-49d9-a6bf-18a0367a63cf)
 
 ## Disclaimer
