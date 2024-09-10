@@ -152,9 +152,9 @@ function Check-Exclusions {
     if ($exclusions -eq $exclusions -like "*N/A: Must be an administrator to view exclusions*") {
         return "[WARNING] No permissions to view exclusions"
     } elseif ($exclusions.Count -eq 0) {
-        return "[OK] No exclusions were found."
+        return "[OK] No exclusions were found"
     } else {
-        return "[ERROR] Exclusions were found."
+        return "[ERROR] Exclusions were found"
     }
 }
 
@@ -164,7 +164,7 @@ switch ($exclusionExtensionsStatus) {
     "[WARNING] No permissions to view Exclusions" {
         Write-Host "Exclusion Extensions :                                        $exclusionExtensionsStatus" -ForegroundColor Yellow
     }
-    "[OK] No exclusions were found." {
+    "[OK] No exclusions were found" {
         Write-Host "Exclusion Extensions :                                        $exclusionExtensionsStatus" -ForegroundColor Green
     }
     default {
@@ -178,11 +178,25 @@ switch ($exclusionPathsStatus) {
     "[WARNING] No permissions to view Exclusions" {
         Write-Host "Exclusion Paths :                                             $exclusionPathsStatus" -ForegroundColor Yellow
     }
-    "[OK] No exclusions were found." {
+    "[OK] No exclusions were found" {
         Write-Host "Exclusion Paths :                                             $exclusionPathsStatus" -ForegroundColor Green
     }
     default {
         Write-Host "Exclusion Paths :                                             $exclusionPathsStatus" -ForegroundColor Red
+    }
+}
+
+# Checking Exclusion Processes
+$exclusionProcessesStatus = Check-Exclusions -exclusions $DefenderPreferences.ExclusionProcess
+switch ($exclusionProcessesStatus) {
+    "[WARNING] No permissions to view Exclusions" {
+        Write-Host "Exclusion Processes :                                         $exclusionPathsStatus" -ForegroundColor Yellow
+    }
+    "[OK] No exclusions were found" {
+        Write-Host "Exclusion Processes :                                         $exclusionPathsStatus" -ForegroundColor Green
+    }
+    default {
+        Write-Host "Exclusion Processes :                                         $exclusionPathsStatus" -ForegroundColor Red
     }
 }
 
