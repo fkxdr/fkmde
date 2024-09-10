@@ -65,7 +65,7 @@ if (Test-Path $SmartScreenValuePath) {
             $SmartScreenDisabled = $true
         }
     } catch {
-        Write-Host "Microsoft Defender SmartScreen :                              [ERROR] Property SmartScreenEnabled does not exist" -ForegroundColor Yellow
+        Write-Host "Microsoft Defender SmartScreen :                              [WARNING] Property SmartScreenEnabled does not exist" -ForegroundColor Yellow
     }
 } else {
     Write-Host "Microsoft Defender SmartScreen : [ERROR] Path not found or inaccessible" -ForegroundColor Yellow
@@ -81,4 +81,100 @@ if ($MDENotRunning) {
 } elseif ($RealTimeProtectionDisabled) {
     Write-Host "[Action] Enabling Defender Antivirus - Real-Time Protection is a prerequisite to run this script."
     Exit
+}
+
+# Tamper Protection status
+$TamperProtectionStatus = $DefenderStatus.IsTamperProtected
+$TamperProtectionManage = $DefenderStatus.TamperProtectionSource
+
+# Confirm if Tamper Protection is enabled or disabled
+if ($TamperProtectionStatus -eq $true) {
+    Write-Host "Tamper Protection Status :                                    [OK] Enabled" -ForegroundColor Green
+} elseif ($TamperProtectionStatus -eq $false) {
+    Write-Host "Tamper Protection Status :                                    [ERROR] Disabled" -ForegroundColor Yellow
+} else {
+    Write-Host "Tamper Protection Status :                                    [ERROR] Unknown - $tpStatus"  -ForegroundColor Red
+}
+
+# Confirm if Tamper Protection is managed by Microsoft or other
+if ($TamperProtectionManage -eq "Intune") {
+    Write-Host "Tamper Protection Source :                                    [OK] Intune" -ForegroundColor Green
+} elseif ($TamperProtectionManage -eq "ATP") {
+    Write-Host "Tamper Protection Source :                                    [OK] MDE Tenant" -ForegroundColor Green
+} else {
+    Write-Host "Tamper Protection Source :                                    [ERROR] Unknown - $tpManage"  -ForegroundColor Red
+}
+
+
+# Defender Preferences status
+Write-Host ""
+$DefenderPreferences = Get-MpPreference
+
+# Checking IOAV Protection
+if (-not $DefenderPreferences.DisableIOAVProtection) {
+    Write-Host "IOAV Protection :                                             [OK] Enabled" -ForegroundColor Green
+} else {
+    Write-Host "IOAV Protection :                                             [ERROR] Disabled" -ForegroundColor Red
+}
+
+# Checking Email Scanning
+if (-not $DefenderPreferences.DisableEmailScanning) {
+    Write-Host "Email Scanning :                                              [OK] Enabled" -ForegroundColor Green
+} else {
+    Write-Host "Email Scanning :                                              [ERROR] Disabled" -ForegroundColor Red
+}
+
+# Checking Realtime Monitoring
+if (-not $DefenderPreferences.DisableRealtimeMonitoring) {
+    Write-Host "Realtime Monitoring :                                         [OK] Enabled" -ForegroundColor Green
+} else {
+    Write-Host "Realtime Monitoring :                                         [ERROR] Disabled" -ForegroundColor Red
+}
+
+# Checking Behavior Monitoring
+if (-not $DefenderPreferences.DisableBehaviorMonitoring) {
+    Write-Host "Behavior Monitoring :                                         [OK] Enabled" -ForegroundColor Green
+} else {
+    Write-Host "Behavior Monitoring :                                         [ERROR] Disabled" -ForegroundColor Red
+}
+
+# Check Microsoft Defender Exclusions
+Write-Host ""
+function Check-Exclusions {
+    param ($exclusions)
+    if ($exclusions -eq $null -or $exclusions -like "*N/A: Must be an administrator to view exclusions*") {
+        return "[WARNING] No permissions to view Exclusions"
+    } elseif ($exclusions.Count -eq 0) {
+        return "[OK] No exclusions were found."
+    } else {
+        return "[ERROR] Exclusions were found."
+    }
+}
+
+# Checking Exclusion Extensions
+$exclusionExtensionsStatus = Check-Exclusions -exclusions $DefenderPreferences.ExclusionExtension
+switch ($exclusionExtensionsStatus) {
+    "[WARNING] No permissions to view Exclusions" {
+        Write-Host "Exclusion Extensions :                                        $exclusionExtensionsStatus" -ForegroundColor Yellow
+    }
+    "[OK] No exclusions were found." {
+        Write-Host "Exclusion Extensions :                                        $exclusionExtensionsStatus" -ForegroundColor Green
+    }
+    default {
+        Write-Host "Exclusion Extensions :                                        $exclusionExtensionsStatus" -ForegroundColor Red
+    }
+}
+
+# Checking Exclusion Paths
+$exclusionPathsStatus = Check-Exclusions -exclusions $DefenderPreferences.ExclusionPath
+switch ($exclusionPathsStatus) {
+    "[WARNING] No permissions to view Exclusions" {
+        Write-Host "Exclusion Paths :                                             $exclusionPathsStatus" -ForegroundColor Yellow
+    }
+    "[OK] No exclusions were found." {
+        Write-Host "Exclusion Paths :                                             $exclusionPathsStatus" -ForegroundColor Green
+    }
+    default {
+        Write-Host "Exclusion Paths :                                             $exclusionPathsStatus" -ForegroundColor Red
+    }
 }
