@@ -16,4 +16,4 @@
 This tool is intended for educational and security research purposes only. The author is not responsible for misuse or for any damage that may occur from using this tool. It is the end user's responsibility to comply with all applicable laws and regulations. The use of this tool against targets without prior mutual consent is illegal.
 
 ## Credits
-- [VakninHai](https://x.com/VakninHai/status/1796628601535652289/photo/1) - Prvilege Bypassing through Windows Event 5007
+- [VakninHai](https://x.com/VakninHai/status/1796628601535652289/photo/1) - Privilege Bypassing through Windows Event 5007
