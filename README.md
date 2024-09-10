@@ -12,6 +12,9 @@
 
 ![image](https://github.com/user-attachments/assets/a26c305c-0b55-49d9-a6bf-18a0367a63cf)
 
+## ToDo
+- 1121 EventVwr ASR Bypass
+
 ## Disclaimer
 This tool is intended for educational and security research purposes only. The author is not responsible for misuse or for any damage that may occur from using this tool. It is the end user's responsibility to comply with all applicable laws and regulations. The use of this tool against targets without prior mutual consent is illegal.
 
