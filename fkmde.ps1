@@ -178,3 +178,25 @@ switch ($exclusionPathsStatus) {
         Write-Host "Exclusion Paths :                                             $exclusionPathsStatus" -ForegroundColor Red
     }
 }
+
+# Bypass locked Exclusions by checking in Windows Events
+Write-Host "Attempting to bypass exclusion list..."
+$LogName = "Microsoft-Windows-Windows Defender/Operational"
+$EventID = 5007
+$Events = Get-WinEvent -LogName $LogName | Where-Object { $_.Id -eq $EventID }
+$ExclusionEvents = $Events | Where-Object { $_.Message -match "Exclusions" }
+$Pattern = "HKLM\\SOFTWARE\\Microsoft\\Windows Defender\\Exclusions\\Paths\\([^`"]+)"
+$foundExclusions = $false
+
+foreach ($Event in $ExclusionEvents) {
+    if ($Event.Message -match $Pattern) {
+        Write-Host "  - $($Matches[1])"
+        $foundExclusions = $true
+    }
+}
+
+if (-not $foundExclusions) {
+    Write-Host "Bypassed Exclusions:                                          [OK] None" -ForegroundColor Green
+}
+
+
