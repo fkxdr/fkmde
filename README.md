@@ -6,7 +6,8 @@
 
 ## Features
 - **Defender Full Audit**: Quickly assesses the status of real-time protection, tamper protection and exclusion settings to detect overly permissive rules that might allow malware to bypass scanning.
-- **Bypass Privilege for Exclusions**: Utilizes Event 5007 to bypass the protected list in MDE.  
+- **Bypass Privilege for Exclusions**: Utilizes Event 5007 to bypass the protected exclusions list in MDE.
+- **Bypass Privilege for ASR Rules**: Utilizes Event 1121 to bypass the protected list of exclusions in ASR
   
 <br />
 
@@ -20,3 +21,4 @@ This tool is intended for educational and security research purposes only. The a
 
 ## Credits
 - [VakninHai](https://x.com/VakninHai/status/1796628601535652289/photo/1) - Privilege Bypassing through Windows Event 5007
+- [ViziosDe](https://raw.githubusercontent.com/ViziosDe/MDExclusionParser/main/Invoke-MDExclusionParser.ps1) - Privilege Bypassing through Windows Event 1121
