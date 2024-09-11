@@ -287,3 +287,36 @@ if (IsAdmin) {
 } else {
     Write-Host "ASR Exclusions:                                               [WARNING] No permissions to view ASR Exclusions" -ForegroundColor Yellow
 }
+
+
+# Attempting to bypass ASR rules 
+if (-not (IsAdmin)) {
+    Write-Host "Attempting to bypass ASR rules..."
+    $LogName = "Microsoft-Windows-Windows Defender/Operational"
+    $EventID = 1121
+    $displayedRules = @{}
+
+    try {
+        $ASREvents = Get-WinEvent -LogName $LogName -FilterXPath "*[System[EventID=$EventID]]" -ErrorAction Stop
+        if ($ASREvents) {
+            foreach ($event in $ASREvents) {
+                if ($event.Message -match 'ID: ([\w\-]+)') {
+                    $asrID = $matches[1]
+                    $ruleName = $asrRulesDefinitions[$asrID]
+                    if ($ruleName -and -not $displayedRules[$ruleName]) {
+                        Write-Host "$ruleName [ENABLED]" -ForegroundColor Green
+                        $displayedRules[$ruleName] = $true
+                    }
+                }
+            }
+        }
+        foreach ($ruleID in $asrRulesDefinitions.Keys) {
+            $ruleName = $asrRulesDefinitions[$ruleID]
+            if (-not $displayedRules[$ruleName]) {
+                Write-Host "$ruleName [ERROR] Bypass unsuccessful" -ForegroundColor Yellow
+            }
+        }
+    } catch {
+        # No ASR Rules in event logs
+    }
+}
