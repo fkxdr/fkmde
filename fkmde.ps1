@@ -61,18 +61,6 @@ try {
     $NPDisabled = $true
 }
 
-# Check if any of the conditions are met to stop the script
-if ($MDENotRunning) {
-    Write-Host "[Action] Onboarding Microsoft Defender for Endpoint on the device is a prerequisite to run this script."
-    Exit
-} elseif ($NPDisabled -and $SmartScreenDisabled) {
-    Write-Host "[Action] Enabling Network Protection or SmartScreen is a prerequisite to run this script."
-    Exit
-} elseif ($RealTimeProtectionDisabled) {
-    Write-Host "[Action] Enabling Defender Antivirus - Real-Time Protection is a prerequisite to run this script."
-    Exit
-}
-
 # Tamper Protection status
 $TamperProtectionStatus = $DefenderStatus.IsTamperProtected
 $TamperProtectionManage = $DefenderStatus.TamperProtectionSource
@@ -92,7 +80,7 @@ if ($TamperProtectionManage -eq "Intune") {
 } elseif ($TamperProtectionManage -eq "ATP") {
     Write-Host "Tamper Protection Source :                                    [OK] MDE Tenant" -ForegroundColor Green
 } else {
-    Write-Host "Tamper Protection Source :                                    [ERROR] Unknown - $tpManage"  -ForegroundColor Red
+    Write-Host "Tamper Protection Source :                                    [ERROR] Unknown - $TamperProtectionManage"  -ForegroundColor Red
 }
 
 # Defender Preferences status
@@ -114,7 +102,7 @@ if (Test-Path $SmartScreenValuePath) {
         Write-Host "Microsoft Defender SmartScreen :                              [WARNING] Property SmartScreenEnabled does not exist" -ForegroundColor Yellow
     }
 } else {
-    Write-Host "Microsoft Defender SmartScreen : [ERROR] Path not found or inaccessible" -ForegroundColor Yellow
+    Write-Host "Microsoft Defender SmartScreen :                              [ERROR] Path not found or inaccessible" -ForegroundColor Yellow
 }
 
 # Checking IOAV Protection
@@ -260,7 +248,11 @@ if (IsAdmin) {
             2 { "Yellow" }
             Default { "Red" }
         }
+        if ($ruleName) {
         Write-Host "$ruleName [$statusDescription]" -ForegroundColor $color
+        } else {
+        Write-Host "ASR Rules :                                                   [ERROR] No ASR Rules found" -ForegroundColor $color
+        }
     }
 } else {
     Write-Host "ASR Rules :                                                   [WARNING] No permissions to view ASR Rules" -ForegroundColor Yellow
