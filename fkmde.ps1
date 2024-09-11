@@ -99,7 +99,7 @@ if (Test-Path $SmartScreenValuePath) {
             $SmartScreenDisabled = $true
         }
     } catch {
-        Write-Host "Microsoft Defender SmartScreen :                              [WARNING] Property SmartScreenEnabled does not exist" -ForegroundColor Yellow
+        Write-Host "Microsoft Defender SmartScreen :                              [ERROR] Property SmartScreenEnabled does not exist" -ForegroundColor Yellow
     }
 } else {
     Write-Host "Microsoft Defender SmartScreen :                              [ERROR] Path not found or inaccessible" -ForegroundColor Yellow
@@ -138,7 +138,7 @@ Write-Host ""
 function Check-Exclusions {
     param ($exclusions)
     if ($exclusions -eq $exclusions -like "*N/A: Must be an administrator to view exclusions*") {
-        return "[WARNING] No permissions to view exclusions"
+        return "[ERROR] No permissions to view exclusions"
     } elseif ($exclusions.Count -eq 0) {
         return "[OK] No exclusions were found"
     } else {
@@ -149,7 +149,7 @@ function Check-Exclusions {
 # Checking Exclusion Extensions
 $exclusionExtensionsStatus = Check-Exclusions -exclusions $DefenderPreferences.ExclusionExtension
 switch ($exclusionExtensionsStatus) {
-    "[WARNING] No permissions to view Exclusions" {
+    "[ERROR] No permissions to view Exclusions" {
         Write-Host "Exclusion Extensions :                                        $exclusionExtensionsStatus" -ForegroundColor Yellow
     }
     "[OK] No exclusions were found" {
@@ -163,7 +163,7 @@ switch ($exclusionExtensionsStatus) {
 # Checking Exclusion Paths
 $exclusionPathsStatus = Check-Exclusions -exclusions $DefenderPreferences.ExclusionPath
 switch ($exclusionPathsStatus) {
-    "[WARNING] No permissions to view Exclusions" {
+    "[ERROR] No permissions to view Exclusions" {
         Write-Host "Exclusion Paths :                                             $exclusionPathsStatus" -ForegroundColor Yellow
     }
     "[OK] No exclusions were found" {
@@ -177,7 +177,7 @@ switch ($exclusionPathsStatus) {
 # Checking Exclusion Processes
 $exclusionProcessesStatus = Check-Exclusions -exclusions $DefenderPreferences.ExclusionProcess
 switch ($exclusionProcessesStatus) {
-    "[WARNING] No permissions to view Exclusions" {
+    "[ERROR] No permissions to view Exclusions" {
         Write-Host "Exclusion Processes :                                         $exclusionPathsStatus" -ForegroundColor Yellow
     }
     "[OK] No exclusions were found" {
@@ -255,7 +255,7 @@ if (IsAdmin) {
         }
     }
 } else {
-    Write-Host "ASR Rules :                                                   [WARNING] No permissions to view ASR Rules" -ForegroundColor Yellow
+    Write-Host "ASR Rules :                                                   [ERROR] No permissions to view ASR Rules" -ForegroundColor Yellow
 }
 
 # Check ASR rules exclusions with highlighted errors for found exclusions
@@ -285,7 +285,7 @@ if (IsAdmin) {
         # No ASR Exclusions
     }
 } else {
-    Write-Host "ASR Exclusions:                                               [WARNING] No permissions to view ASR Exclusions" -ForegroundColor Yellow
+    Write-Host "ASR Exclusions:                                               [ERROR] No permissions to view ASR Exclusions" -ForegroundColor Yellow
 }
 
 
@@ -308,12 +308,6 @@ if (-not (IsAdmin)) {
                         $displayedRules[$ruleName] = $true
                     }
                 }
-            }
-        }
-        foreach ($ruleID in $asrRulesDefinitions.Keys) {
-            $ruleName = $asrRulesDefinitions[$ruleID]
-            if (-not $displayedRules[$ruleName]) {
-                Write-Host "$ruleName [ERROR] Bypass unsuccessful" -ForegroundColor Yellow
             }
         }
     } catch {
