@@ -13,6 +13,11 @@
 
 ![image](https://github.com/user-attachments/assets/4e13d1b7-ad7f-44aa-9f88-8d5961eefba5)
 
+## TODO
+- Offer EDR kill when Tamper is disabled
+- Review if EDR is running Passive or Block
+- BYOVD EDR Kill
+- Review Smartscreen
 
 ## Disclaimer
 This tool is intended for educational and security research purposes only. The author is not responsible for misuse or for any damage that may occur from using this tool. It is the end user's responsibility to comply with all applicable laws and regulations. The use of this tool against targets without prior mutual consent is illegal.
