@@ -250,7 +250,7 @@ if (IsAdmin) {
         }
     }
 } 
-# Check ASR rules exclusions with highlighted errors for found exclusions
+# Check ASR rules exclusions
 if (IsAdmin) {
     $asrExclusionEntries = @()
     for ($i = 0; $i -lt $DefenderPreferences.AttackSurfaceReductionRules_RuleSpecificExclusions.Count; $i++) {
