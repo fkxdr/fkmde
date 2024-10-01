@@ -12,6 +12,7 @@ function IsAdmin {
 }
 
 # Get Windows Defender Real-Time Protection status
+$DefenderPreferences = Get-MpPreference
 $DefenderStatus = Get-MpComputerStatus
 Write-Host "Antivirus Engine Version :                                    $($DefenderStatus.AMEngineVersion )" -ForegroundColor Green
 Write-Host "Antivirus Product Version :                                   $($DefenderStatus.AMProductVersion)" -ForegroundColor Green
@@ -146,47 +147,40 @@ function Check-Exclusions {
 
 # Checking Exclusion Extensions when Admin
 if (IsAdmin) {
-    $exclusionExtensionsStatus = Check-Exclusions -exclusions $DefenderPreferences.ExclusionExtension
-    switch ($exclusionExtensionsStatus) {
-        "[ERROR] No permissions to view Exclusions" {
-            Write-Host "Exclusion Extensions :                                        $exclusionExtensionsStatus" -ForegroundColor Yellow
-        }
-        "[OK] No exclusions were found" {
-            Write-Host "Exclusion Extensions :                                        $exclusionExtensionsStatus" -ForegroundColor Green
-        }
-        default {
-            Write-Host "Exclusion Extensions :                                        $exclusionExtensionsStatus" -ForegroundColor Red
+    # Exclusion Extensions
+    $exclusionExtensions = $DefenderPreferences.ExclusionExtension
+    if ($exclusionExtensions -eq $null -or $exclusionExtensions.Count -eq 0) {
+        Write-Host "Exclusion Extensions :                                        [OK] No exclusions were found" -ForegroundColor Green
+    } else {
+        Write-Host "Exclusion Extensions :                                        [NG] Exclusions found" -ForegroundColor Red
+        foreach ($extension in $exclusionExtensions) {
+            Write-Host "  - $extension"
         }
     }
     
-    # Checking Exclusion Extensions when Admin
-    $exclusionPathsStatus = Check-Exclusions -exclusions $DefenderPreferences.ExclusionPath
-    switch ($exclusionPathsStatus) {
-        "[ERROR] No permissions to view Exclusions" {
-            Write-Host "Exclusion Paths :                                             $exclusionPathsStatus" -ForegroundColor Yellow
-        }
-        "[OK] No exclusions were found" {
-            Write-Host "Exclusion Paths :                                             $exclusionPathsStatus" -ForegroundColor Green
-        }
-        default {
-            Write-Host "Exclusion Paths :                                             $exclusionPathsStatus" -ForegroundColor Red
+    # Exclusion Paths
+    $exclusionPaths = $DefenderPreferences.ExclusionPath
+    if ($exclusionPaths -eq $null -or $exclusionPaths.Count -eq 0) {
+        Write-Host "Exclusion Paths :                                             [OK] No exclusions were found" -ForegroundColor Green
+    } else {
+        Write-Host "Exclusion Paths :                                             [NG] Exclusions found" -ForegroundColor Red
+        foreach ($path in $exclusionPaths) {
+            Write-Host "  - $path"
         }
     }
 
-    # Checking Exclusion Extensions when Admin
-    $exclusionProcessesStatus = Check-Exclusions -exclusions $DefenderPreferences.ExclusionProcess
-    switch ($exclusionProcessesStatus) {
-        "[ERROR] No permissions to view Exclusions" {
-            Write-Host "Exclusion Processes :                                         $exclusionPathsStatus" -ForegroundColor Yellow
-        }
-        "[OK] No exclusions were found" {
-            Write-Host "Exclusion Processes :                                         $exclusionPathsStatus" -ForegroundColor Green
-        }
-        default {
-            Write-Host "Exclusion Processes :                                         $exclusionPathsStatus" -ForegroundColor Red
+    # Exclusion Processes
+    $exclusionProcesses = $DefenderPreferences.ExclusionProcess
+    if ($exclusionProcesses -eq $null -or $exclusionProcesses.Count -eq 0) {
+        Write-Host "Exclusion Processes :                                         [OK] No exclusions were found" -ForegroundColor Green
+    } else {
+        Write-Host "Exclusion Processes :                                         [NG] Exclusions found" -ForegroundColor Red
+        foreach ($process in $exclusionProcesses) {
+            Write-Host "  - $process"
         }
     }
 }
+
 
 # Bypass locked Exclusions by checking in Windows Events 5007 if not Admin
 if (-not (IsAdmin)) {
@@ -239,9 +233,9 @@ if (IsAdmin) {
     for ($i = 0; $i -lt $asrRuleGuids.Count; $i++) {
         $ruleName = $asrRulesDefinitions[$asrRuleGuids[$i]]
         $statusDescription = switch ($asrStatuses[$i]) {
-            0 { "Disabled" }
-            1 { "OK" }
-            2 { "Audit" }
+            0 { "[KO] Disabled" }
+            1 { "[OK] Enabled" }
+            2 { "[??] Audit" }
             Default { "Unknown" }
         }
         $color = switch ($asrStatuses[$i]) {
@@ -250,9 +244,9 @@ if (IsAdmin) {
             Default { "Red" }
         }
         if ($ruleName) {
-        Write-Host "$ruleName [$statusDescription]" -ForegroundColor $color
+            Write-Host "$ruleName $statusDescription" -ForegroundColor $color
         } else {
-        Write-Host "ASR Rules :                                                   [KO] Disabled" -ForegroundColor $color
+            Write-Host "ASR Rules :                                                   [KO] Disabled" -ForegroundColor $color
         }
     }
 } 
