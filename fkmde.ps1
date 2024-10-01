@@ -18,13 +18,13 @@ Write-Host "Antivirus Product Version :                                   $($Def
 Write-Host ""
 try {
     if ($defenderStatus.RealTimeProtectionEnabled -eq $true) {
-        Write-Host "Real-Time Protection Enabled :                                [OK] $($DefenderStatus.RealTimeProtectionEnabled)" -ForegroundColor Green
+        Write-Host "Real-Time Protection :                                        [OK] Enabled" -ForegroundColor Green
     } else {
-        Write-Host "[6] Real-Time Protection Enabled :                                [NO] $($DefenderStatus.RealTimeProtectionEnabled)" -ForegroundColor Red
+        Write-Host "[6] Real-Time Protection :                                        [KO] $($DefenderStatus.RealTimeProtectionEnabled)" -ForegroundColor Red
         $RealTimeProtectionDisabled = $true
     }
 } catch [System.Exception] {
-    Write-Host "[E] Real-Time Protection Enabled :                                [NO] The status is unknown." -ForegroundColor Red
+    Write-Host "[E] Real-Time Protection :                                        [??] The status is unknown." -ForegroundColor Yellow
     $RealTimeProtectionDisabled = $true
 }
 
@@ -34,13 +34,13 @@ try {
     $MDEstatus = $MDEservice.Status
 
     if ($MDEstatus -eq "Running") {
-        Write-Host "Microsoft Defender for Endpoint Sensor :                      [OK] Running" -ForegroundColor Green
+        Write-Host "Microsoft Defender for Endpoint Sensor :                      [OK] Enabled" -ForegroundColor Green
     } elseif ($MDEstatus -eq "Stopped") {
-        Write-Host "Microsoft Defender for Endpoint Sensor :                      [ERROR] Not Running" -ForegroundColor Red
+        Write-Host "Microsoft Defender for Endpoint Sensor :                      [KO] Disabled" -ForegroundColor Red
         $MDENotRunning = $true
     }
 } catch {
-    Write-Host "Microsoft Defender for Endpoint Sensor :                      [ERROR] No Sense found" -ForegroundColor Red
+    Write-Host "Microsoft Defender for Endpoint Sensor :                      [??] No Sense found" -ForegroundColor Yellow
     $MDENotRunning = $true
 }
 
@@ -51,14 +51,34 @@ try {
     if ($NetworkProtectionValue -eq 1) {
         Write-Host "Microsoft Defender for Endpoint Network Protection :          [OK] Enabled" -ForegroundColor Green
     } elseif ($NetworkProtectionValue -eq 0) {
-        Write-Host "Microsoft Defender for Endpoint Network Protection :          [ERROR] Disabled" -ForegroundColor Red
+        Write-Host "Microsoft Defender for Endpoint Network Protection :          [KO] Disabled" -ForegroundColor Red
         $NPDisabled = $true
     } elseif ($NetworkProtectionValue -eq 2) {
         Write-Host "Microsoft Defender for Endpoint Network Protection :          [OK] Audit" -ForegroundColor Green
     }
 } catch [System.Exception] {
-    Write-Host "Microsoft Defender for Endpoint Network Protection :          [ERROR] The status is unknown" -ForegroundColor Red
+    Write-Host "Microsoft Defender for Endpoint Network Protection :          [??] The status is unknown" -ForegroundColor Yellow
     $NPDisabled = $true
+}
+
+# Microsoft Edge SmartScreen policy settings
+$edgeSSvalue = $null
+$policyPaths = @(
+    "HKLM:\SOFTWARE\Policies\Microsoft\Edge",
+    "HKCU:\SOFTWARE\Policies\Microsoft\Edge"
+)
+foreach ($path in $policyPaths) {
+    if (Test-Path $path) {
+        try {
+            $edgeSSvalue = Get-ItemPropertyValue -Path $path -Name "SmartScreenEnabled" -ErrorAction Stop
+            break
+        } catch {}
+    }
+}
+if ($edgeSSvalue -eq 0) {
+    Write-Host "Microsoft Edge SmartScreen :                                  [KO] Disabled" -ForegroundColor Red
+} else {
+    Write-Host "Microsoft Edge SmartScreen :                                  [OK] Enabled" -ForegroundColor Green
 }
 
 # Tamper Protection status
@@ -69,9 +89,9 @@ $TamperProtectionManage = $DefenderStatus.TamperProtectionSource
 if ($TamperProtectionStatus -eq $true) {
     Write-Host "Tamper Protection Status :                                    [OK] Enabled" -ForegroundColor Green
 } elseif ($TamperProtectionStatus -eq $false) {
-    Write-Host "Tamper Protection Status :                                    [ERROR] Disabled" -ForegroundColor Yellow
+    Write-Host "Tamper Protection Status :                                    [KO] Disabled" -ForegroundColor Yellow
 } else {
-    Write-Host "Tamper Protection Status :                                    [ERROR] Unknown - $tpStatus"  -ForegroundColor Red
+    Write-Host "Tamper Protection Status :                                    [??] Unknown - $tpStatus"  -ForegroundColor Yellow
 }
 
 # Confirm if Tamper Protection is managed by Microsoft or other
@@ -80,57 +100,35 @@ if ($TamperProtectionManage -eq "Intune") {
 } elseif ($TamperProtectionManage -eq "ATP") {
     Write-Host "Tamper Protection Source :                                    [OK] MDE Tenant" -ForegroundColor Green
 } else {
-    Write-Host "Tamper Protection Source :                                    [ERROR] Unknown - $TamperProtectionManage"  -ForegroundColor Red
-}
-
-# Defender Preferences status
-Write-Host ""
-$DefenderPreferences = Get-MpPreference
-
-# Defender SmartScreen status
-$SmartScreenValuePath = "HKLM:\SOFTWARE\Policies\Microsoft\Edge"
-if (Test-Path $SmartScreenValuePath) {
-    try {
-        $SSvalue = Get-ItemPropertyValue -Path $SmartScreenValuePath -Name "SmartScreenEnabled"
-        if ($SSvalue -eq "1") {
-            Write-Host "Microsoft Defender SmartScreen : [OK] Enabled`n" -ForegroundColor Green
-        } else {
-            Write-Host "Microsoft Defender SmartScreen : [ERROR] Disabled`n" -ForegroundColor Red
-            $SmartScreenDisabled = $true
-        }
-    } catch {
-        Write-Host "Microsoft Defender SmartScreen :                              [ERROR] Property SmartScreenEnabled does not exist" -ForegroundColor Yellow
-    }
-} else {
-    Write-Host "Microsoft Defender SmartScreen :                              [ERROR] Path not found or inaccessible" -ForegroundColor Yellow
+    Write-Host "Tamper Protection Source :                                    [??] Unknown - $TamperProtectionManage"  -ForegroundColor Yellow
 }
 
 # Checking IOAV Protection
 if (-not $DefenderPreferences.DisableIOAVProtection) {
     Write-Host "IOAV Protection :                                             [OK] Enabled" -ForegroundColor Green
 } else {
-    Write-Host "IOAV Protection :                                             [ERROR] Disabled" -ForegroundColor Red
+    Write-Host "IOAV Protection :                                             [KO] Disabled" -ForegroundColor Red
 }
 
 # Checking Email Scanning
 if (-not $DefenderPreferences.DisableEmailScanning) {
     Write-Host "Email Scanning :                                              [OK] Enabled" -ForegroundColor Green
 } else {
-    Write-Host "Email Scanning :                                              [ERROR] Disabled" -ForegroundColor Red
+    Write-Host "Email Scanning :                                              [KO] Disabled" -ForegroundColor Red
 }
 
 # Checking Realtime Monitoring
 if (-not $DefenderPreferences.DisableRealtimeMonitoring) {
     Write-Host "Realtime Monitoring :                                         [OK] Enabled" -ForegroundColor Green
 } else {
-    Write-Host "Realtime Monitoring :                                         [ERROR] Disabled" -ForegroundColor Red
+    Write-Host "Realtime Monitoring :                                         [??] Disabled" -ForegroundColor Red
 }
 
 # Checking Behavior Monitoring
 if (-not $DefenderPreferences.DisableBehaviorMonitoring) {
     Write-Host "Behavior Monitoring :                                         [OK] Enabled" -ForegroundColor Green
 } else {
-    Write-Host "Behavior Monitoring :                                         [ERROR] Disabled" -ForegroundColor Red
+    Write-Host "Behavior Monitoring :                                         [??] Disabled" -ForegroundColor Red
 }
 
 # Check Microsoft Defender Exclusions
@@ -142,69 +140,73 @@ function Check-Exclusions {
     } elseif ($exclusions.Count -eq 0) {
         return "[OK] No exclusions were found"
     } else {
-        return "[ERROR] Exclusions were found"
+        return "[NG] Exclusions were found"
     }
 }
 
-# Checking Exclusion Extensions
-$exclusionExtensionsStatus = Check-Exclusions -exclusions $DefenderPreferences.ExclusionExtension
-switch ($exclusionExtensionsStatus) {
-    "[ERROR] No permissions to view Exclusions" {
-        Write-Host "Exclusion Extensions :                                        $exclusionExtensionsStatus" -ForegroundColor Yellow
+# Checking Exclusion Extensions when Admin
+if (IsAdmin) {
+    $exclusionExtensionsStatus = Check-Exclusions -exclusions $DefenderPreferences.ExclusionExtension
+    switch ($exclusionExtensionsStatus) {
+        "[ERROR] No permissions to view Exclusions" {
+            Write-Host "Exclusion Extensions :                                        $exclusionExtensionsStatus" -ForegroundColor Yellow
+        }
+        "[OK] No exclusions were found" {
+            Write-Host "Exclusion Extensions :                                        $exclusionExtensionsStatus" -ForegroundColor Green
+        }
+        default {
+            Write-Host "Exclusion Extensions :                                        $exclusionExtensionsStatus" -ForegroundColor Red
+        }
     }
-    "[OK] No exclusions were found" {
-        Write-Host "Exclusion Extensions :                                        $exclusionExtensionsStatus" -ForegroundColor Green
+    
+    # Checking Exclusion Extensions when Admin
+    $exclusionPathsStatus = Check-Exclusions -exclusions $DefenderPreferences.ExclusionPath
+    switch ($exclusionPathsStatus) {
+        "[ERROR] No permissions to view Exclusions" {
+            Write-Host "Exclusion Paths :                                             $exclusionPathsStatus" -ForegroundColor Yellow
+        }
+        "[OK] No exclusions were found" {
+            Write-Host "Exclusion Paths :                                             $exclusionPathsStatus" -ForegroundColor Green
+        }
+        default {
+            Write-Host "Exclusion Paths :                                             $exclusionPathsStatus" -ForegroundColor Red
+        }
     }
-    default {
-        Write-Host "Exclusion Extensions :                                        $exclusionExtensionsStatus" -ForegroundColor Red
+
+    # Checking Exclusion Extensions when Admin
+    $exclusionProcessesStatus = Check-Exclusions -exclusions $DefenderPreferences.ExclusionProcess
+    switch ($exclusionProcessesStatus) {
+        "[ERROR] No permissions to view Exclusions" {
+            Write-Host "Exclusion Processes :                                         $exclusionPathsStatus" -ForegroundColor Yellow
+        }
+        "[OK] No exclusions were found" {
+            Write-Host "Exclusion Processes :                                         $exclusionPathsStatus" -ForegroundColor Green
+        }
+        default {
+            Write-Host "Exclusion Processes :                                         $exclusionPathsStatus" -ForegroundColor Red
+        }
     }
 }
 
-# Checking Exclusion Paths
-$exclusionPathsStatus = Check-Exclusions -exclusions $DefenderPreferences.ExclusionPath
-switch ($exclusionPathsStatus) {
-    "[ERROR] No permissions to view Exclusions" {
-        Write-Host "Exclusion Paths :                                             $exclusionPathsStatus" -ForegroundColor Yellow
+# Bypass locked Exclusions by checking in Windows Events 5007 if not Admin
+if (-not (IsAdmin)) {
+    Write-Host "Missing permissions. Attempting to bypass exclusion list..."
+    $LogName = "Microsoft-Windows-Windows Defender/Operational"
+    $EventID = 5007
+    $Pattern = "HKLM\\SOFTWARE\\Microsoft\\Windows Defender\\Exclusions\\Paths\\([^`"]+)"
+    $foundExclusions = $false
+    $ExclusionEvents = Get-WinEvent -LogName $LogName | Where-Object { $_.Id -eq $EventID -and $_.Message -match "Exclusions" }
+    
+    foreach ($Event in $ExclusionEvents) {
+        if ($Event.Message -match $Pattern) {
+            Write-Host "  - $($Matches[1])"
+            $foundExclusions = $true
+        }
     }
-    "[OK] No exclusions were found" {
-        Write-Host "Exclusion Paths :                                             $exclusionPathsStatus" -ForegroundColor Green
+    if (-not $foundExclusions) {
+        Write-Host "Bypassed Exclusions:                                          [OK] No exclusions were found" -ForegroundColor Green
     }
-    default {
-        Write-Host "Exclusion Paths :                                             $exclusionPathsStatus" -ForegroundColor Red
-    }
-}
-
-# Checking Exclusion Processes
-$exclusionProcessesStatus = Check-Exclusions -exclusions $DefenderPreferences.ExclusionProcess
-switch ($exclusionProcessesStatus) {
-    "[ERROR] No permissions to view Exclusions" {
-        Write-Host "Exclusion Processes :                                         $exclusionPathsStatus" -ForegroundColor Yellow
-    }
-    "[OK] No exclusions were found" {
-        Write-Host "Exclusion Processes :                                         $exclusionPathsStatus" -ForegroundColor Green
-    }
-    default {
-        Write-Host "Exclusion Processes :                                         $exclusionPathsStatus" -ForegroundColor Red
-    }
-}
-
-# Bypass locked Exclusions by checking in Windows Events 5007
-Write-Host "Attempting to bypass exclusion list..."
-$LogName = "Microsoft-Windows-Windows Defender/Operational"
-$EventID = 5007
-$Pattern = "HKLM\\SOFTWARE\\Microsoft\\Windows Defender\\Exclusions\\Paths\\([^`"]+)"
-$foundExclusions = $false
-$ExclusionEvents = Get-WinEvent -LogName $LogName | Where-Object { $_.Id -eq $EventID -and $_.Message -match "Exclusions" }
-
-foreach ($Event in $ExclusionEvents) {
-    if ($Event.Message -match $Pattern) {
-        Write-Host "  - $($Matches[1])"
-        $foundExclusions = $true
-    }
-}
-if (-not $foundExclusions) {
-    Write-Host "Bypassed Exclusions:                                          [OK] None" -ForegroundColor Green
-}
+ }   
 
 # Check ASR rules status
 $asrRulesDefinitions = @{
@@ -230,7 +232,6 @@ $asrRulesDefinitions = @{
 }
 
 Write-Host ""
-Write-Host "Attempting to extract ASR rules..."
 if (IsAdmin) {
     $asrStatuses = Get-MpPreference | Select-Object -ExpandProperty AttackSurfaceReductionRules_Actions
     $asrRuleGuids = Get-MpPreference | Select-Object -ExpandProperty AttackSurfaceReductionRules_Ids
@@ -251,13 +252,10 @@ if (IsAdmin) {
         if ($ruleName) {
         Write-Host "$ruleName [$statusDescription]" -ForegroundColor $color
         } else {
-        Write-Host "ASR Rules :                                                   [ERROR] No ASR Rules found" -ForegroundColor $color
+        Write-Host "ASR Rules :                                                   [KO] Disabled" -ForegroundColor $color
         }
     }
-} else {
-    Write-Host "ASR Rules :                                                   [ERROR] No permissions to view ASR Rules" -ForegroundColor Yellow
-}
-
+} 
 # Check ASR rules exclusions with highlighted errors for found exclusions
 if (IsAdmin) {
     $asrExclusionEntries = @()
@@ -284,14 +282,11 @@ if (IsAdmin) {
     } else {
         # No ASR Exclusions
     }
-} else {
-    Write-Host "ASR Exclusions:                                               [ERROR] No permissions to view ASR Exclusions" -ForegroundColor Yellow
-}
-
+} 
 
 # Attempting to bypass ASR rules 
 if (-not (IsAdmin)) {
-    Write-Host "Attempting to bypass ASR rules..."
+    Write-Host "Missing permissions. Attempting to bypass ASR rules..."
     $LogName = "Microsoft-Windows-Windows Defender/Operational"
     $EventID = 1121
     $displayedRules = @{}
@@ -304,7 +299,7 @@ if (-not (IsAdmin)) {
                     $asrID = $matches[1]
                     $ruleName = $asrRulesDefinitions[$asrID]
                     if ($ruleName -and -not $displayedRules[$ruleName]) {
-                        Write-Host "$ruleName [ENABLED]" -ForegroundColor Green
+                        Write-Host "$ruleName [OK] Enabled" -ForegroundColor Green
                         $displayedRules[$ruleName] = $true
                     }
                 }
