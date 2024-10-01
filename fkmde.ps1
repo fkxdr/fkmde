@@ -1,7 +1,20 @@
-Write-Host "fkmde by fkxdr"
+$banner = @'
 
-# Check each status(prerequisite) for testing
-Write-Host ""
+      _____         _____         _____         _____         _____
+    .'     '.     .'     '.     .'     '.     .'     '.     .'     '.
+   /  o   o  \   /  o   o  \   /  o   o  \   /  o   o  \   /  o   o  \
+  |           | |           | |           | |           | |           |
+  |  \     /  | |  \     /  | |  \     /  | |  \     /  | |  \     /  |
+   \  '---'  /   \  '---'  /   \  '---'  /   \  '---'  /   \  '---'  /
+    '._____.'     '._____.'     '._____.'     '._____.'     '._____.'       
+
+   fkmde by @fkxdr
+   https://github.com/fkxdr/fkmde
+
+   
+'@
+
+Write-Host $banner -ForegroundColor DarkGray
 Write-Host "Checking device configuration..."
 Write-Host ""
 
@@ -21,11 +34,11 @@ try {
     if ($defenderStatus.RealTimeProtectionEnabled -eq $true) {
         Write-Host "Real-Time Protection :                                        [OK] Enabled" -ForegroundColor Green
     } else {
-        Write-Host "[6] Real-Time Protection :                                        [KO] $($DefenderStatus.RealTimeProtectionEnabled)" -ForegroundColor Red
+        Write-Host "[6] Real-Time Protection :                                        [KO] $($DefenderStatus.RealTimeProtectionEnabled)" -ForegroundColor DarkRed
         $RealTimeProtectionDisabled = $true
     }
 } catch [System.Exception] {
-    Write-Host "[E] Real-Time Protection :                                        [??] The status is unknown." -ForegroundColor Yellow
+    Write-Host "[E] Real-Time Protection :                                        [??] The status is unknown." -ForegroundColor DarkYellow
     $RealTimeProtectionDisabled = $true
 }
 
@@ -37,11 +50,11 @@ try {
     if ($MDEstatus -eq "Running") {
         Write-Host "Microsoft Defender for Endpoint Sensor :                      [OK] Enabled" -ForegroundColor Green
     } elseif ($MDEstatus -eq "Stopped") {
-        Write-Host "Microsoft Defender for Endpoint Sensor :                      [KO] Disabled" -ForegroundColor Red
+        Write-Host "Microsoft Defender for Endpoint Sensor :                      [KO] Disabled" -ForegroundColor DarkRed
         $MDENotRunning = $true
     }
 } catch {
-    Write-Host "Microsoft Defender for Endpoint Sensor :                      [??] No Sense found" -ForegroundColor Yellow
+    Write-Host "Microsoft Defender for Endpoint Sensor :                      [??] No Sense found" -ForegroundColor DarkYellow
     $MDENotRunning = $true
 }
 
@@ -52,13 +65,13 @@ try {
     if ($NetworkProtectionValue -eq 1) {
         Write-Host "Microsoft Defender for Endpoint Network Protection :          [OK] Enabled" -ForegroundColor Green
     } elseif ($NetworkProtectionValue -eq 0) {
-        Write-Host "Microsoft Defender for Endpoint Network Protection :          [KO] Disabled" -ForegroundColor Red
+        Write-Host "Microsoft Defender for Endpoint Network Protection :          [KO] Disabled" -ForegroundColor DarkRed
         $NPDisabled = $true
     } elseif ($NetworkProtectionValue -eq 2) {
         Write-Host "Microsoft Defender for Endpoint Network Protection :          [OK] Audit" -ForegroundColor Green
     }
 } catch [System.Exception] {
-    Write-Host "Microsoft Defender for Endpoint Network Protection :          [??] The status is unknown" -ForegroundColor Yellow
+    Write-Host "Microsoft Defender for Endpoint Network Protection :          [??] The status is unknown" -ForegroundColor DarkYellow
     $NPDisabled = $true
 }
 
@@ -77,7 +90,7 @@ foreach ($path in $policyPaths) {
     }
 }
 if ($edgeSSvalue -eq 0) {
-    Write-Host "Microsoft Edge SmartScreen :                                  [KO] Disabled" -ForegroundColor Red
+    Write-Host "Microsoft Edge SmartScreen :                                  [KO] Disabled" -ForegroundColor DarkRed
 } else {
     Write-Host "Microsoft Edge SmartScreen :                                  [OK] Enabled" -ForegroundColor Green
 }
@@ -90,9 +103,9 @@ $TamperProtectionManage = $DefenderStatus.TamperProtectionSource
 if ($TamperProtectionStatus -eq $true) {
     Write-Host "Tamper Protection Status :                                    [OK] Enabled" -ForegroundColor Green
 } elseif ($TamperProtectionStatus -eq $false) {
-    Write-Host "Tamper Protection Status :                                    [KO] Disabled" -ForegroundColor Yellow
+    Write-Host "Tamper Protection Status :                                    [KO] Disabled" -ForegroundColor DarkYellow
 } else {
-    Write-Host "Tamper Protection Status :                                    [??] Unknown - $tpStatus"  -ForegroundColor Yellow
+    Write-Host "Tamper Protection Status :                                    [??] Unknown - $tpStatus"  -ForegroundColor DarkYellow
 }
 
 # Confirm if Tamper Protection is managed by Microsoft or other
@@ -101,35 +114,35 @@ if ($TamperProtectionManage -eq "Intune") {
 } elseif ($TamperProtectionManage -eq "ATP") {
     Write-Host "Tamper Protection Source :                                    [OK] MDE Tenant" -ForegroundColor Green
 } else {
-    Write-Host "Tamper Protection Source :                                    [??] Unknown - $TamperProtectionManage"  -ForegroundColor Yellow
+    Write-Host "Tamper Protection Source :                                    [??] Unknown - $TamperProtectionManage"  -ForegroundColor DarkYellow
 }
 
 # Checking IOAV Protection
 if (-not $DefenderPreferences.DisableIOAVProtection) {
     Write-Host "IOAV Protection :                                             [OK] Enabled" -ForegroundColor Green
 } else {
-    Write-Host "IOAV Protection :                                             [KO] Disabled" -ForegroundColor Red
+    Write-Host "IOAV Protection :                                             [KO] Disabled" -ForegroundColor DarkRed
 }
 
 # Checking Email Scanning
 if (-not $DefenderPreferences.DisableEmailScanning) {
     Write-Host "Email Scanning :                                              [OK] Enabled" -ForegroundColor Green
 } else {
-    Write-Host "Email Scanning :                                              [KO] Disabled" -ForegroundColor Red
+    Write-Host "Email Scanning :                                              [KO] Disabled" -ForegroundColor DarkRed
 }
 
 # Checking Realtime Monitoring
 if (-not $DefenderPreferences.DisableRealtimeMonitoring) {
     Write-Host "Realtime Monitoring :                                         [OK] Enabled" -ForegroundColor Green
 } else {
-    Write-Host "Realtime Monitoring :                                         [??] Disabled" -ForegroundColor Red
+    Write-Host "Realtime Monitoring :                                         [??] Disabled" -ForegroundColor DarkRed
 }
 
 # Checking Behavior Monitoring
 if (-not $DefenderPreferences.DisableBehaviorMonitoring) {
     Write-Host "Behavior Monitoring :                                         [OK] Enabled" -ForegroundColor Green
 } else {
-    Write-Host "Behavior Monitoring :                                         [??] Disabled" -ForegroundColor Red
+    Write-Host "Behavior Monitoring :                                         [??] Disabled" -ForegroundColor DarkRed
 }
 
 # Check Microsoft Defender Exclusions
@@ -152,7 +165,7 @@ if (IsAdmin) {
     if ($exclusionExtensions -eq $null -or $exclusionExtensions.Count -eq 0) {
         Write-Host "Exclusion Extensions :                                        [OK] No exclusions were found" -ForegroundColor Green
     } else {
-        Write-Host "Exclusion Extensions :                                        [NG] Exclusions found" -ForegroundColor Red
+        Write-Host "Exclusion Extensions :                                        [NG] Exclusions found" -ForegroundColor DarkRed
         foreach ($extension in $exclusionExtensions) {
             Write-Host "  - $extension"
         }
@@ -163,7 +176,7 @@ if (IsAdmin) {
     if ($exclusionPaths -eq $null -or $exclusionPaths.Count -eq 0) {
         Write-Host "Exclusion Paths :                                             [OK] No exclusions were found" -ForegroundColor Green
     } else {
-        Write-Host "Exclusion Paths :                                             [NG] Exclusions found" -ForegroundColor Red
+        Write-Host "Exclusion Paths :                                             [NG] Exclusions found" -ForegroundColor DarkRed
         foreach ($path in $exclusionPaths) {
             Write-Host "  - $path"
         }
@@ -174,7 +187,7 @@ if (IsAdmin) {
     if ($exclusionProcesses -eq $null -or $exclusionProcesses.Count -eq 0) {
         Write-Host "Exclusion Processes :                                         [OK] No exclusions were found" -ForegroundColor Green
     } else {
-        Write-Host "Exclusion Processes :                                         [NG] Exclusions found" -ForegroundColor Red
+        Write-Host "Exclusion Processes :                                         [NG] Exclusions found" -ForegroundColor DarkRed
         foreach ($process in $exclusionProcesses) {
             Write-Host "  - $process"
         }
@@ -240,8 +253,8 @@ if (IsAdmin) {
         }
         $color = switch ($asrStatuses[$i]) {
             1 { "Green" }
-            2 { "Yellow" }
-            Default { "Red" }
+            2 { "DarkYellow" }
+            Default { "DarkRed" }
         }
         if ($ruleName) {
             Write-Host "$ruleName $statusDescription" -ForegroundColor $color
@@ -264,7 +277,7 @@ if (IsAdmin) {
         foreach ($entry in $asrExclusionEntries) {
             $ruleName = $asrRulesDefinitions[$entry.RuleID]
             if ($entry.ExclusionPaths) {
-                Write-Host "`n$ruleName [KO] Exclusions found" -ForegroundColor Red
+                Write-Host "`n$ruleName [KO] Exclusions found" -ForegroundColor DarkRed
                 $paths = $entry.ExclusionPaths -split '\|'
                 foreach ($path in $paths) {
                     Write-Host "  - $path"
