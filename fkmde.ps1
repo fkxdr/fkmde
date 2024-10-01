@@ -240,7 +240,7 @@ if (IsAdmin) {
         $ruleName = $asrRulesDefinitions[$asrRuleGuids[$i]]
         $statusDescription = switch ($asrStatuses[$i]) {
             0 { "Disabled" }
-            1 { "Enabled" }
+            1 { "OK" }
             2 { "Audit" }
             Default { "Unknown" }
         }
@@ -270,17 +270,15 @@ if (IsAdmin) {
         foreach ($entry in $asrExclusionEntries) {
             $ruleName = $asrRulesDefinitions[$entry.RuleID]
             if ($entry.ExclusionPaths) {
-                Write-Host "`n$ruleName [ERROR] Exclusions found" -ForegroundColor Red
+                Write-Host "`n$ruleName [KO] Exclusions found" -ForegroundColor Red
                 $paths = $entry.ExclusionPaths -split '\|'
                 foreach ($path in $paths) {
                     Write-Host "  - $path"
                 }
-            } else {
-                # No ASR Exclusions
             }
         }
     } else {
-        # No ASR Exclusions
+        Write-Host "ASR Exclusions:                                               [OK] No exclusions were found" -ForegroundColor Green
     }
 } 
 
