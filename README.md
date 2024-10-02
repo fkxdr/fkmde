@@ -16,7 +16,8 @@
 
 ## Additional Exploit Parameters
 
-`fkmde` currently allows two exploit parameters to enhance the security research experience. The `--kill` parameter and techniques are used by Clop Ransomware to disable and avoid Defender. The `--unkill` reverses the changes to Microsoft standard settings. Please use this feature with extreme caution and in secure enviroments.
+`fkmde` currently allows two exploit parameters to enhance the security research experience. The `--kill` parameter implements techniques that are used by Clop Ransomware to disable and evade Defender. This parameter should be used with *extreme caution* and only in secure, controlled environments. The `--unkill` restores Microsoft Defender to its original settings, reversing any changes made by the `--kill` parameter. Ensure to handle these features responsibly, as improper use can impact system security.  
+Note: The scripts are not directly embedded in `fkmde`. Instead, they are loaded dynamically to minimize detection by Defender when the tool is used solely for enumeration purposes.
 
 ![image](https://github.com/user-attachments/assets/82f87057-d573-43ce-8745-0382374b5dd0)
 
