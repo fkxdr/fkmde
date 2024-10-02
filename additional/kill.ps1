@@ -4,7 +4,6 @@ function IsAdmin {
 }
 
 Write-Host "Attempting to kill Microsoft Defender ..."
-Write-Host ""
 
 if (IsAdmin) {
     # Run the registry commands silently
@@ -18,7 +17,7 @@ if (IsAdmin) {
     cmd.exe /C reg add "HKLM\Software\Policies\Microsoft\Windows Defender\MpEngine" /v "MpCloudBlockLevel" /t REG_DWORD /d "0" /f >$null 2>&1
     cmd.exe /C reg add "HKLM\Software\Policies\Microsoft\Windows Defender\Spynet" /v "SpynetReporting" /t REG_DWORD /d "0" /f >$null 2>&1
 
-    Write-Host "Microsoft Defender might have been killed:            [??] Please review"
+    Write-Host "Microsoft Defender might have been killed. Please review."
 } else {
     Write-Host "This script must be run as Administrator to modify Microsoft Defender settings."
 }
