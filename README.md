@@ -8,10 +8,18 @@
 - **Defender Full Audit**: Quickly assesses the status of real-time protection, tamper protection and exclusion settings to detect overly permissive rules that might allow malware to bypass scanning.
 - **Bypass Privilege for Exclusions**: Utilizes Event 5007 to bypass the protected exclusions list in MDE.
 - **Bypass Privilege for ASR Rules**: Utilizes Event 1121 to bypass the protected list of exclusions in ASR
+- **Additional Exploit Parameters**: Uses techniques from Clop Ransomware
   
 <br />
 
 ![image](https://github.com/user-attachments/assets/4e13d1b7-ad7f-44aa-9f88-8d5961eefba5)
+
+## Additional Exploit Parameters
+
+`fkmde` currently allows two exploit parameters to enhance the security research experience. The `--kill` parameter and techniques are used by Clop Ransomware to disable and avoid Defender. The `--unkill` reverses the changes to Microsoft standard settings. Please use this feature with extreme caution and in secure enviroments.
+
+![image](https://github.com/user-attachments/assets/82f87057-d573-43ce-8745-0382374b5dd0)
+
 
 ## TODO
 - Offer EDR kill when Tamper is disabled
