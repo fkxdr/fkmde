@@ -10,11 +10,9 @@
 - **Exclusion Enumeration**: Allows for low privilege exclusion enumeration, without relying on event log bypass.
 - **Clop Ransomware Bypass**: The script uses techniques similar to those used by Clop Ransomware to disable and evade Microsoft Defender.
 
-![image](https://github.com/user-attachments/assets/4e13d1b7-ad7f-44aa-9f88-8d5961eefba5)
-
 ## Usage
 
-`fkmde` currently allows two exploit parameters to enhance the security research experience: 
+`fkmde` currently assesses the status of real-time protection, tamper protection, and exclusion settings to detect overly permissive rules that might allow malware to bypass scanning. It utilizes Event 1121 and 5007 to bypass the protected exclusions list, and allows two exploit parameters to enhance the security research experience.
 
 ```powershell
 fkmde.ps1
@@ -26,9 +24,11 @@ fkmde.ps1 --enum <path> [depth]
   This parameter triggers a script that implements techniques similar to those used by Clop Ransomware to disable and evade Microsoft Defender. The script is not hardcoded into `fkmde`, but dynamically fetched from an external source to avoid pre-execution detection. This should be used *only* in secure, isolated environments for research purposes.
 
 - **`--enum <path> [depth]` Parameter**  
-  This parameter performs a comprehensive enumeration of directories, scanning for exclusions or misconfigurations without relying on event logs or admin permissions. The script dynamically disables Windows Defender popup notifications during execution to provide a seamless experience without alerting users. Upon completion, it safely re-enables the notifications.
+  This parameter performs a comprehensive enumeration of directories by using `MpCmdRun.exe`, scanning for exclusions or misconfigurations without relying on event logs or admin permissions. The script dynamically disables Windows Defender popup notifications during execution to provide a seamless experience without alerting users. Upon completion, it safely re-enables the notifications.
   
 Note: The scripts are not directly embedded in `fkmde`. Instead, they are loaded dynamically to minimize detection by Defender when the tool is used solely for enumeration purposes.
+
+![image](https://github.com/user-attachments/assets/4e13d1b7-ad7f-44aa-9f88-8d5961eefba5)
 
 ![image](https://github.com/user-attachments/assets/82f87057-d573-43ce-8745-0382374b5dd0)
 
