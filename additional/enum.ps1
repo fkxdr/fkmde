@@ -1,8 +1,3 @@
-param (
-    [string]$Directory = "C:\Windows",  # Default to C:\Windows if not specified
-    [int]$Depth = 1  # Default depth if not specified
-)
-
 # Path to MpCmdRun.exe
 $MpPath = "C:\Program Files\Windows Defender\MpCmdRun.exe"
 
