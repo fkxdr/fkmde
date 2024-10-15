@@ -74,4 +74,3 @@ catch {
 
 # Re-enable Defender popups after scan
 Toggle-DefenderPopup
-Write-Host "`nEnumeration complete."
