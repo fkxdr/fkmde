@@ -20,7 +20,7 @@
   This parameter triggers a script that implements techniques similar to those used by Clop Ransomware to disable and evade Microsoft Defender. The script is not hardcoded into `fkmde`, but dynamically fetched from an external source to avoid pre-execution detection. This should be used *only* in secure, isolated environments for research purposes.
 
 - **`--enum` Parameter**  
-  This parameter performs a comprehensive enumeration of directories, scanning for exclusions or misconfigurations that could allow potential malware to bypass Defender. The script dynamically disables Windows Defender popup notifications during execution to provide a seamless experience without alerting users. Upon completion, it safely re-enables the notifications.
+  This parameter performs a comprehensive enumeration of directories, scanning for exclusions or misconfigurations without relying on event logs or admin permissions. The script dynamically disables Windows Defender popup notifications during execution to provide a seamless experience without alerting users. Upon completion, it safely re-enables the notifications.
   
 Note: The scripts are not directly embedded in `fkmde`. Instead, they are loaded dynamically to minimize detection by Defender when the tool is used solely for enumeration purposes.
 
