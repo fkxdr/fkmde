@@ -347,6 +347,6 @@ switch ($Action) {
         Run-ScriptFromURL "https://raw.githubusercontent.com/fkxdr/fkmde/refs/heads/main/additional/kill.ps1"
     }
     default {
-        Write-Host "Invalid argument. Use --kill or --unkill."
+        Write-Host "Invalid argument. Use --kill for example."
     }
 }
