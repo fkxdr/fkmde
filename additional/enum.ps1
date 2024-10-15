@@ -42,6 +42,7 @@ try {
 
     $processedFolders = 0
     $totalFolders = $folders.Count
+    $progressBarWidth = 50  # Width of the loading bar
 
     foreach ($folder in $folders) {
         $folderPath = $folder.FullName
@@ -52,15 +53,22 @@ try {
             Write-Host "[+] Folder excluded: $folderPath"
         }
 
-        # Update progress bar instead of writing a new line for every folder.
+        # Increment processed folder count
         $processedFolders++
-        Write-Progress -Activity "Scanning Folders" -Status "Scanned $processedFolders of $totalFolders" -PercentComplete (($processedFolders / $totalFolders) * 100)
+
+        # Calculate percentage and number of blocks to show
+        $percentage = ($processedFolders / $totalFolders) * 100
+        $blocks = [int]($processedFolders / $totalFolders * $progressBarWidth)
+        $loadingBar = ('#' * $blocks) + ('-' * ($progressBarWidth - $blocks))
+
+        # Display the progress bar in the same line
+        Write-Host -NoNewline "`r[$loadingBar] $processedFolders of $totalFolders folders scanned ($([math]::Round($percentage, 2))%)"
     }
 }
 catch {
-    Write-Host "Error occurred during folder enumeration or scan: $_"
+    Write-Host "`nError occurred during folder enumeration or scan: $_"
 }
 
 # Re-enable Defender popups after scan
 Toggle-DefenderPopup
-Write-Host "Enumeration complete."
+Write-Host "`nEnumeration complete."
