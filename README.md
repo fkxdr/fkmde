@@ -6,12 +6,9 @@
 
 ## Features
 - **Defender Full Audit**: Quickly assesses the status of real-time protection, tamper protection, and exclusion settings to detect overly permissive rules that might allow malware to bypass scanning.
-- **Bypass Privilege for Exclusions**: Utilizes Event 5007 to bypass the protected exclusions list in MDE.
-- **Bypass Privilege for ASR Rules**: Utilizes Event 1121 to bypass the protected list of exclusions in ASR.
-- **Dynamic Script Loading**: All sensitive exploit scripts (e.g., `--kill` and `--enum`) are dynamically fetched from an external source, minimizing the chance of detection by Defender.
-- **Defender Popup Suppression**: During enumeration, the script temporarily disables Defender's popup notifications and re-enables them upon completion.
+- **Bypass Privilege for Exclusions and ASR Rules**: Utilizes Event 1121 and 5007 to bypass the protected exclusions list in MDE.
 - **Comprehensive Directory Enumeration**: Allows for directory enumeration, with a customizable depth parameter, to explore exclusion paths and subdirectories.
-- **Clop Ransomware Techniques**: The script uses techniques similar to those used by Clop Ransomware to disable and evade Microsoft Defender.
+- **Clop Ransomware Technique**: The script uses techniques similar to those used by Clop Ransomware to disable and evade Microsoft Defender.
   
 <br />
 
@@ -30,6 +27,9 @@
 Note: The scripts are not directly embedded in `fkmde`. Instead, they are loaded dynamically to minimize detection by Defender when the tool is used solely for enumeration purposes.
 
 ![image](https://github.com/user-attachments/assets/82f87057-d573-43ce-8745-0382374b5dd0)
+
+![image](https://github.com/user-attachments/assets/34cd0bbe-3e21-4342-9b43-2db61cc0ab85)
+
 
 ## TODO
 - Review if EDR is running Passive or Block
