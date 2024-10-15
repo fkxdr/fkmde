@@ -56,14 +56,17 @@ try {
         $blocks = [int]($processedFolders / $totalFolders * $progressBarWidth)
         $loadingBar = ('#' * $blocks) + ('-' * ($progressBarWidth - $blocks))
 
-        # Update the progress bar on the same line
-        Write-Host -NoNewline "`r[$loadingBar] $processedFolders of $totalFolders folders scanned ($([math]::Round($percentage, 2))%)"
+        # Clear the current line and update the progress bar on the same line
+        Write-Host -NoNewline "`r[$loadingBar] $processedFolders of $totalFolders folders scanned ($([math]::Round($percentage, 2))%) "
 
         if ($output -match "was skipped") {
-            # Show exclusion and clear the line after a short delay
+            # Show exclusion on a new line
             Write-Host "`n[KO] $folderPath" -ForegroundColor Red
         }
     }
+
+    # Make sure the final progress bar is displayed after the loop finishes
+    Write-Host "`r[$loadingBar] $processedFolders of $totalFolders folders scanned ($([math]::Round($percentage, 2))%)" 
 }
 catch {
     Write-Host "`nError occurred during folder enumeration or scan: $_"
