@@ -26,8 +26,7 @@ Note: The scripts are not directly embedded in `fkmde`. Instead, they are loaded
 
 ![image](https://github.com/user-attachments/assets/82f87057-d573-43ce-8745-0382374b5dd0)
 
-![image](https://github.com/user-attachments/assets/34cd0bbe-3e21-4342-9b43-2db61cc0ab85)
-
+![image](https://github.com/user-attachments/assets/e69d929d-9d32-42c0-9d8d-2e03bdc47adc)
 
 ## TODO
 - Review if EDR is running Passive or Block
