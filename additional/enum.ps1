@@ -1,8 +1,3 @@
-param (
-    [string]$Directory = "C:\Windows",  # Default to C:\Windows if not specified
-    [int]$Depth = 1  # Default depth if not specified
-)
-
 # Path to MpCmdRun.exe
 $MpPath = "C:\Program Files\Windows Defender\MpCmdRun.exe"
 
@@ -27,12 +22,6 @@ if (-Not (Test-Path -Path $MpPath)) {
     return
 }
 
-# Check if the directory exists
-if (-Not (Test-Path -Path $Directory -PathType Container)) {
-    Write-Host "Error: Directory '$Directory' not found."
-    return
-}
-
 # Disable Defender popups before scan
 Toggle-DefenderPopup -Disable
 
@@ -47,7 +36,7 @@ try {
         return
     }
 
-    # Counter for progress tracking
+    # Progress bar setup
     $processedFolders = 0
     $totalFolders = $folders.Count
 
@@ -61,7 +50,7 @@ try {
 
         # Increment processed folder count and update progress
         $processedFolders++
-        Write-Host -NoNewline "Processed $processedFolders / $totalFolders folders...`r"
+        Write-Progress -Activity "Scanning folders" -Status "$processedFolders of $totalFolders scanned" -PercentComplete (($processedFolders / $totalFolders) * 100)
     }
 }
 catch {
@@ -70,4 +59,4 @@ catch {
 
 # Re-enable Defender popups after scan
 Toggle-DefenderPopup
-Write-Host "`nEnumeration complete."
+Write-Host "Enumeration complete."
