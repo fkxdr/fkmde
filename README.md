@@ -18,7 +18,6 @@
 
 `fkmde` currently allows two exploit parameters to enhance the security research experience: 
 * The `--kill` parameter implements techniques that are used by Clop Ransomware to disable and evade Defender. This parameter should be used with *extreme caution* and only in secure, controlled environments.
-* The `--unkill` restores Microsoft Defender to its original settings, reversing any changes made by the `--kill` parameter. Ensure to handle these features responsibly, as improper use can impact system security.
   
 Note: The scripts are not directly embedded in `fkmde`. Instead, they are loaded dynamically to minimize detection by Defender when the tool is used solely for enumeration purposes.
 
@@ -26,7 +25,6 @@ Note: The scripts are not directly embedded in `fkmde`. Instead, they are loaded
 
 
 ## TODO
-- Offer EDR kill when Tamper is disabled
 - Review if EDR is running Passive or Block
 - BYOVD EDR Kill
 - Review Smartscreen
