@@ -361,11 +361,11 @@ switch ($Action) {
             }
         }
 
-        Write-Host "Executing enumeration script..."
-        Write-Host "Enumerating directory: $Directory with depth $Depth"
+        Write-Host "Executing enumeration script with depth $Depth..."
         Run-ScriptFromURL "https://raw.githubusercontent.com/fkxdr/fkmde/refs/heads/main/additional/enum.ps1" $Path $Depth
     }
     default {
         Write-Host "Invalid argument. Use --kill or --enum <path> [depth]."
     }
-}   
+}
+ 
