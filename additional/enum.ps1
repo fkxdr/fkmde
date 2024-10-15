@@ -44,13 +44,15 @@ try {
     $totalFolders = $folders.Count
     $progressBarWidth = 50  # Width of the loading bar
 
+    $excludedFolders = @()  # To track excluded folders
+
     foreach ($folder in $folders) {
         $folderPath = $folder.FullName
         $output = & $MpPath -Scan -ScanType 3 -File "$folderPath\|*" 2>&1
 
         if ($output -match "was skipped") {
-            # You can remove this if you don't want to see folder exclusions.
-            Write-Host "`r[+] Folder excluded: $folderPath"
+            # Add excluded folder to the list
+            $excludedFolders += $folderPath
         }
 
         # Increment processed folder count
@@ -63,6 +65,14 @@ try {
 
         # Display the progress bar in the same line
         Write-Host -NoNewline "`r[$loadingBar] $processedFolders of $totalFolders folders scanned ($([math]::Round($percentage, 2))%)"
+    }
+
+    # After the scan, show excluded folders
+    if ($excludedFolders.Count -gt 0) {
+        Write-Host "`n[+] Excluded folders:"
+        foreach ($excluded in $excludedFolders) {
+            Write-Host "    - $excluded"
+        }
     }
 }
 catch {
