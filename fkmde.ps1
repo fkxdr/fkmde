@@ -1,6 +1,6 @@
 param (
     [string]$Action,
-    [string]$Path = "C:\Windows",  # Default path for --enum
+    [string]$Directory = "C:\Windows",  # Default path for --enum
     [int]$Depth = 1  # Default depth if not provided
 )
 
@@ -333,9 +333,9 @@ function Run-ScriptFromURL {
         [int]$ScanDepth
     )
     try {
-        # Pass the directory path and depth as arguments to the script content
         $scriptContent = Invoke-WebRequest -Uri $url -UseBasicParsing | Select-Object -ExpandProperty Content
-        Invoke-Expression -Command "$scriptContent -Directory `"$DirectoryPath`" -Depth $ScanDepth"
+        $scriptBlock = [scriptblock]::Create($scriptContent)
+        & $scriptBlock -Directory $DirectoryPath -Depth $ScanDepth
     }
     catch {
         Write-Host "Failed to download or run the script from $url"
