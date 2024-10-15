@@ -352,7 +352,7 @@ switch ($Action) {
         # Check if a directory path and depth are provided
         if ($args.Count -ge 1) {
             if (Test-Path $args[0]) {
-                $Path = $args[0]
+                $Directory = $args[0]
                 if ($args.Count -ge 2 -and $args[1] -as [int]) {
                     $Depth = $args[1]
                 }
@@ -362,10 +362,10 @@ switch ($Action) {
         }
 
         Write-Host "Executing enumeration script..."
-        Write-Host "Enumerating directory: $Path with depth $Depth"
+        Write-Host "Enumerating directory: $Directory with depth $Depth"
         Run-ScriptFromURL "https://raw.githubusercontent.com/fkxdr/fkmde/refs/heads/main/additional/enum.ps1" $Path $Depth
     }
     default {
         Write-Host "Invalid argument. Use --kill or --enum <path> [depth]."
     }
-}
+}   
