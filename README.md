@@ -12,14 +12,20 @@
 
 ![image](https://github.com/user-attachments/assets/4e13d1b7-ad7f-44aa-9f88-8d5961eefba5)
 
-## Additional Exploit Parameters
+## Usage
 
 `fkmde` currently allows two exploit parameters to enhance the security research experience: 
+
+```powershell
+fkmde.ps1
+fkmde.ps1 --kill
+fkmde.ps1 --enum <path> [depth]
+```
 
 - **`--kill` Parameter**  
   This parameter triggers a script that implements techniques similar to those used by Clop Ransomware to disable and evade Microsoft Defender. The script is not hardcoded into `fkmde`, but dynamically fetched from an external source to avoid pre-execution detection. This should be used *only* in secure, isolated environments for research purposes.
 
-- **`--enum [PATH] [DEPTH]` Parameter**  
+- **`--enum <path> [depth]` Parameter**  
   This parameter performs a comprehensive enumeration of directories, scanning for exclusions or misconfigurations without relying on event logs or admin permissions. The script dynamically disables Windows Defender popup notifications during execution to provide a seamless experience without alerting users. Upon completion, it safely re-enables the notifications.
   
 Note: The scripts are not directly embedded in `fkmde`. Instead, they are loaded dynamically to minimize detection by Defender when the tool is used solely for enumeration purposes.
