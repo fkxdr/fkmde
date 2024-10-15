@@ -12,8 +12,6 @@
 
 ## Usage
 
-`fkmde` currently assesses the status of real-time protection, tamper protection, and exclusion settings to detect overly permissive rules that might allow malware to bypass scanning. It utilizes Event 1121 and 5007 to bypass the protected exclusions list, and allows two exploit parameters to enhance the security research experience.
-
 ```powershell
 fkmde.ps1
 fkmde.ps1 --kill
