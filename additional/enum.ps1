@@ -8,11 +8,9 @@ function Toggle-DefenderPopup {
     )
     $keyPath = "HKCU\Software\Microsoft\Windows\CurrentVersion\Notifications\Settings\Windows.Defender.SecurityCenter"
     if ($Disable) {
-        Write-Host "Disabling Windows Defender popups..."
-        Reg.exe add $keyPath /v "Enabled" /t REG_DWORD /d "0" /f
+        Reg.exe add $keyPath /v "Enabled" /t REG_DWORD /d "0" /f | Out-Null
     } else {
-        Write-Host "Enabling Windows Defender popups..."
-        Reg.exe delete $keyPath /v "Enabled" /f
+        Reg.exe delete $keyPath /v "Enabled" /f | Out-Null
     }
 }
 
@@ -43,17 +41,20 @@ try {
     }
 
     $processedFolders = 0
+    $totalFolders = $folders.Count
+
     foreach ($folder in $folders) {
         $folderPath = $folder.FullName
         $output = & $MpPath -Scan -ScanType 3 -File "$folderPath\|*" 2>&1
 
         if ($output -match "was skipped") {
+            # You can remove this if you don't want to see folder exclusions.
             Write-Host "[+] Folder excluded: $folderPath"
         }
 
-        # Increment processed folder count
+        # Update progress bar instead of writing a new line for every folder.
         $processedFolders++
-        Write-Host "Scanned $processedFolders of $($folders.Count) folders..."
+        Write-Progress -Activity "Scanning Folders" -Status "Scanned $processedFolders of $totalFolders" -PercentComplete (($processedFolders / $totalFolders) * 100)
     }
 }
 catch {
