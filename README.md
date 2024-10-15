@@ -9,8 +9,6 @@
 - **Bypass Privilege for Exclusions and ASR Rules**: Utilizes Event 1121 and 5007 to bypass the protected exclusions list in MDE.
 - **Comprehensive Directory Enumeration**: Allows for directory enumeration, with a customizable depth parameter, to explore exclusion paths and subdirectories.
 - **Clop Ransomware Technique**: The script uses techniques similar to those used by Clop Ransomware to disable and evade Microsoft Defender.
-  
-<br />
 
 ![image](https://github.com/user-attachments/assets/4e13d1b7-ad7f-44aa-9f88-8d5961eefba5)
 
