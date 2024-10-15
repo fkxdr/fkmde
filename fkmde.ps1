@@ -346,11 +346,6 @@ switch ($Action) {
         Write-Host "Executing kill script..."
         Run-ScriptFromURL "https://raw.githubusercontent.com/fkxdr/fkmde/refs/heads/main/additional/kill.ps1"
     }
-    '--unkill' {
-	Write-Host ""
-        Write-Host "Executing unkill script..."
-        Run-ScriptFromURL "https://raw.githubusercontent.com/fkxdr/fkmde/refs/heads/main/additional/unkill.ps1"
-    }
     default {
         Write-Host "Invalid argument. Use --kill or --unkill."
     }
