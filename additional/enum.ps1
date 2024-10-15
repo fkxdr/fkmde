@@ -50,7 +50,7 @@ try {
 
         if ($output -match "was skipped") {
             # You can remove this if you don't want to see folder exclusions.
-            Write-Host "[+] Folder excluded: $folderPath"
+            Write-Host "`r[+] Folder excluded: $folderPath"
         }
 
         # Increment processed folder count
