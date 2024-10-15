@@ -22,6 +22,12 @@ if (-Not (Test-Path -Path $MpPath)) {
     return
 }
 
+# Check if the directory exists
+if (-Not (Test-Path -Path $Directory -PathType Container)) {
+    Write-Host "Error: Directory '$Directory' not found."
+    return
+}
+
 # Disable Defender popups before scan
 Toggle-DefenderPopup -Disable
 
@@ -36,21 +42,12 @@ try {
         return
     }
 
-    # Progress bar setup
-    $processedFolders = 0
-    $totalFolders = $folders.Count
-
     foreach ($folder in $folders) {
         $folderPath = $folder.FullName
         $output = & $MpPath -Scan -ScanType 3 -File "$folderPath\|*" 2>&1
-
         if ($output -match "was skipped") {
             Write-Host "[+] Folder excluded: $folderPath"
         }
-
-        # Increment processed folder count and update progress
-        $processedFolders++
-        Write-Progress -Activity "Scanning folders" -Status "$processedFolders of $totalFolders scanned" -PercentComplete (($processedFolders / $totalFolders) * 100)
     }
 }
 catch {
