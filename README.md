@@ -7,8 +7,8 @@
 ## Features
 - **Defender Full Audit**: Quickly assesses the status of real-time protection, tamper protection, and exclusion settings to detect overly permissive rules that might allow malware to bypass scanning.
 - **Bypass Privilege for Exclusions and ASR Rules**: Utilizes Event 1121 and 5007 to bypass the protected exclusions list in MDE.
-- **Comprehensive Directory Enumeration**: Allows for directory enumeration, with a customizable depth parameter, to explore exclusion paths and subdirectories.
-- **Clop Ransomware Technique**: The script uses techniques similar to those used by Clop Ransomware to disable and evade Microsoft Defender.
+- **Low-Privileged Exclusion Enumeration**: Allows for low privilege exclusion enumeration, without relying on event log bypass.
+- **Clop Ransomware Technique Bypass**: The script uses techniques similar to those used by Clop Ransomware to disable and evade Microsoft Defender.
 
 ![image](https://github.com/user-attachments/assets/4e13d1b7-ad7f-44aa-9f88-8d5961eefba5)
 
