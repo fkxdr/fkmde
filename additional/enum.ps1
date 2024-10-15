@@ -42,12 +42,18 @@ try {
         return
     }
 
+    $processedFolders = 0
     foreach ($folder in $folders) {
         $folderPath = $folder.FullName
         $output = & $MpPath -Scan -ScanType 3 -File "$folderPath\|*" 2>&1
+
         if ($output -match "was skipped") {
             Write-Host "[+] Folder excluded: $folderPath"
         }
+
+        # Increment processed folder count
+        $processedFolders++
+        Write-Host "Scanned $processedFolders of $($folders.Count) folders..."
     }
 }
 catch {
