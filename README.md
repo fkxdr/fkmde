@@ -5,10 +5,13 @@
 `fkmde` is a specialized powershell script designed to evaluate the configuration and operational security of Microsoft Defender for Endpoint (MDE). It aids security professionals, system administrators, and penetration testers in identifying potential vulnerabilities and misconfigurations that might be exploited in a real-world attack.
 
 ## Features
-- **Defender Full Audit**: Quickly assesses the status of real-time protection, tamper protection and exclusion settings to detect overly permissive rules that might allow malware to bypass scanning.
+- **Defender Full Audit**: Quickly assesses the status of real-time protection, tamper protection, and exclusion settings to detect overly permissive rules that might allow malware to bypass scanning.
 - **Bypass Privilege for Exclusions**: Utilizes Event 5007 to bypass the protected exclusions list in MDE.
-- **Bypass Privilege for ASR Rules**: Utilizes Event 1121 to bypass the protected list of exclusions in ASR
-- **Additional Exploit Parameters**: Uses techniques from Clop Ransomware
+- **Bypass Privilege for ASR Rules**: Utilizes Event 1121 to bypass the protected list of exclusions in ASR.
+- **Dynamic Script Loading**: All sensitive exploit scripts (e.g., `--kill` and `--enum`) are dynamically fetched from an external source, minimizing the chance of detection by Defender.
+- **Defender Popup Suppression**: During enumeration, the script temporarily disables Defender's popup notifications and re-enables them upon completion.
+- **Comprehensive Directory Enumeration**: Allows for directory enumeration, with a customizable depth parameter, to explore exclusion paths and subdirectories.
+- **Clop Ransomware Techniques**: The script uses techniques similar to those used by Clop Ransomware to disable and evade Microsoft Defender.
   
 <br />
 
@@ -17,18 +20,21 @@
 ## Additional Exploit Parameters
 
 `fkmde` currently allows two exploit parameters to enhance the security research experience: 
-* The `--kill` parameter implements techniques that are used by Clop Ransomware to disable and evade Defender. This parameter should be used with *extreme caution* and only in secure, controlled environments.
+
+- **`--kill` Parameter**  
+  This parameter triggers a script that implements techniques similar to those used by Clop Ransomware to disable and evade Microsoft Defender. The script is not hardcoded into `fkmde`, but dynamically fetched from an external source to avoid pre-execution detection. This should be used *only* in secure, isolated environments for research purposes.
+
+- **`--enum` Parameter**  
+  This parameter performs a comprehensive enumeration of directories, scanning for exclusions or misconfigurations that could allow potential malware to bypass Defender. The script dynamically disables Windows Defender popup notifications during execution to provide a seamless experience without alerting users. Upon completion, it safely re-enables the notifications.
   
 Note: The scripts are not directly embedded in `fkmde`. Instead, they are loaded dynamically to minimize detection by Defender when the tool is used solely for enumeration purposes.
 
 ![image](https://github.com/user-attachments/assets/82f87057-d573-43ce-8745-0382374b5dd0)
 
-
 ## TODO
 - Review if EDR is running Passive or Block
 - BYOVD EDR Kill
 - Review Smartscreen
-- import https://github.com/Friends-Security/SharpExclusionFinder
 
 ## Disclaimer
 This tool is intended for educational and security research purposes only. The author is not responsible for misuse or for any damage that may occur from using this tool. It is the end user's responsibility to comply with all applicable laws and regulations. The use of this tool against targets without prior mutual consent is illegal.
