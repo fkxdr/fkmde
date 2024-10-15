@@ -49,10 +49,9 @@ try {
         $output = & $MpPath -Scan -ScanType 3 -File "$folderPath\|*" 2>&1
 
         if ($output -match "was skipped") {
-            # Show excluded folder inline without breaking the progress bar
-            $blocks = [int]($processedFolders / $totalFolders * $progressBarWidth)
-            $loadingBar = ('#' * $blocks) + ('-' * ($progressBarWidth - $blocks))
-            Write-Host "`r[+] Folder excluded: $folderPath" -NoNewline
+            # Display exclusion as requested
+            Write-Host "$folderPath" -ForegroundColor Yellow -NoNewline
+            Write-Host "    [KO] Exclusion found" -ForegroundColor Red
         }
 
         # Increment processed folder count
