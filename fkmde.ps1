@@ -360,8 +360,6 @@ switch ($Action) {
                 $Depth = $args[0]
             }
         }
-
-        Write-Host "Executing enumeration script with depth $Depth..."
         Run-ScriptFromURL "https://raw.githubusercontent.com/fkxdr/fkmde/refs/heads/main/additional/enum.ps1" $Path $Depth
     }
     default {
