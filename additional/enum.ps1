@@ -6,21 +6,6 @@ param (
 # Path to MpCmdRun.exe
 $MpPath = "C:\Program Files\Windows Defender\MpCmdRun.exe"
 
-# Function to disable or enable Windows Defender popups
-function Toggle-DefenderPopup {
-    param (
-        [switch]$Disable
-    )
-    $keyPath = "HKCU\Software\Microsoft\Windows\CurrentVersion\Notifications\Settings\Windows.Defender.SecurityCenter"
-    if ($Disable) {
-        Write-Host "Disabling Windows Defender popups..."
-        Reg.exe add $keyPath /v "Enabled" /t REG_DWORD /d "0" /f
-    } else {
-        Write-Host "Enabling Windows Defender popups..."
-        Reg.exe delete $keyPath /v "Enabled" /f
-    }
-}
-
 # Check if MpCmdRun.exe exists
 if (-Not (Test-Path -Path $MpPath)) {
     Write-Host "Error: MpCmdRun.exe not found at $MpPath"
@@ -33,15 +18,26 @@ if (-Not (Test-Path -Path $Directory -PathType Container)) {
     return
 }
 
-# Disable Defender popups before scan
-Toggle-DefenderPopup -Disable
+# Attempt to disable Defender popup notifications
+try {
+    Write-Host "Disabling Windows Defender popups..."
+    Reg.exe add "HKCU\Software\Microsoft\Windows\CurrentVersion\Notifications\Settings\Windows.Defender.SecurityCenter" /v "Enabled" /t REG_DWORD /d "0" /f
+} catch {
+    Write-Host "Failed to disable Windows Defender popups." -ForegroundColor Red
+}
 
 # Start scanning the directories
 $folders = Get-ChildItem -Path $Directory -Recurse -Directory -Depth ($Depth - 1) -ErrorAction SilentlyContinue | Sort-Object FullName
 Write-Host "Found $($folders.Count) folders in $Directory within a depth of $Depth."
 if ($folders.Count -eq 0) {
     Write-Host "No folders found."
-    Toggle-DefenderPopup
+    try {
+        # Re-enable Defender popups after scan
+        Write-Host "Re-enabling Windows Defender popups..."
+        Reg.exe delete "HKCU\Software\Microsoft\Windows\CurrentVersion\Notifications\Settings\Windows.Defender.SecurityCenter" /v "Enabled" /f
+    } catch {
+        Write-Host "Failed to re-enable Windows Defender popups." -ForegroundColor Red
+    }
     return
 }
 
@@ -55,6 +51,11 @@ foreach ($folder in $folders) {
 }
 
 # Re-enable Defender popups after scan
-Toggle-DefenderPopup
+try {
+    Write-Host "Re-enabling Windows Defender popups..."
+    Reg.exe delete "HKCU\Software\Microsoft\Windows\CurrentVersion\Notifications\Settings\Windows.Defender.SecurityCenter" /v "Enabled" /f
+} catch {
+    Write-Host "Failed to re-enable Windows Defender popups." -ForegroundColor Red
+}
 
 Write-Host "Enumeration complete."
