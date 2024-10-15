@@ -33,7 +33,7 @@ Toggle-DefenderPopup -Disable
 try {
     $folders = Get-ChildItem -Path $Directory -Recurse -Directory -Depth ($Depth - 1) -ErrorAction SilentlyContinue | Sort-Object FullName
     Write-Host "Found $($folders.Count) folders in $Directory within a depth of $Depth."
-    
+
     if ($folders.Count -eq 0) {
         Write-Host "No folders found."
         Toggle-DefenderPopup
@@ -44,6 +44,22 @@ try {
     $totalFolders = $folders.Count
     $progressBarWidth = 50  # Width of the loading bar
 
+    # Function to update the loading bar
+    function Update-ProgressBar {
+        param (
+            [int]$Processed,
+            [int]$Total
+        )
+
+        $percentage = ($Processed / $Total) * 100
+        $blocks = [int]($Processed / $Total * $progressBarWidth)
+        $loadingBar = ('#' * $blocks) + ('-' * ($progressBarWidth - $blocks))
+        Write-Host -NoNewline "`r[$loadingBar] $Processed of $Total folders scanned ($([math]::Round($percentage, 2))%)"
+    }
+
+    # Update progress bar initially
+    Update-ProgressBar -Processed $processedFolders -Total $totalFolders
+
     foreach ($folder in $folders) {
         $folderPath = $folder.FullName
         $output = & $MpPath -Scan -ScanType 3 -File "$folderPath\|*" 2>&1
@@ -51,17 +67,14 @@ try {
         # Increment processed folder count
         $processedFolders++
 
-        # Calculate percentage and number of blocks to show
-        $percentage = ($processedFolders / $totalFolders) * 100
-        $blocks = [int]($processedFolders / $totalFolders * $progressBarWidth)
-        $loadingBar = ('#' * $blocks) + ('-' * ($progressBarWidth - $blocks))
-
-        # Display the progress bar
-        Write-Host -NoNewline "`r[$loadingBar] $processedFolders of $totalFolders folders scanned ($([math]::Round($percentage, 2))%)"
+        # Update the progress bar
+        Update-ProgressBar -Processed $processedFolders -Total $totalFolders
 
         if ($output -match "was skipped") {
-            # Add line break and display exclusion as requested
-            Write-Host " [KO] $folderPath" -ForegroundColor Red -NoNewline
+            # Add exclusion output below the progress bar without interrupting the bar
+            Write-Host "`n[KO] $folderPath" -ForegroundColor Red
+            # Reprint the progress bar to keep it visually above exclusions
+            Update-ProgressBar -Processed $processedFolders -Total $totalFolders
         }
     }
 }
