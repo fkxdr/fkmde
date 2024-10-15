@@ -328,11 +328,14 @@ if (-not $Action) {
 # Function to execute external scripts in /additional repo
 function Run-ScriptFromURL {
     param (
-        [string]$url
+        [string]$url,
+        [string]$DirectoryPath,
+        [int]$ScanDepth
     )
     try {
+        # Pass the directory path and depth as arguments to the script content
         $scriptContent = Invoke-WebRequest -Uri $url -UseBasicParsing | Select-Object -ExpandProperty Content
-        Invoke-Expression $scriptContent
+        Invoke-Expression -Command "$scriptContent -Directory `"$DirectoryPath`" -Depth $ScanDepth"
     }
     catch {
         Write-Host "Failed to download or run the script from $url"
@@ -346,21 +349,21 @@ switch ($Action) {
         Run-ScriptFromURL "https://raw.githubusercontent.com/fkxdr/fkmde/refs/heads/main/additional/kill.ps1"
     }
     '--enum' {
-        # Check if the first argument after --enum is numeric (depth), or if it's a valid path
+        # Check if a directory path and depth are provided
         if ($args.Count -ge 1) {
-            if ($args[0] -as [int]) {
-                $Depth = $args[0]
-            } elseif (Test-Path $args[0]) {
+            if (Test-Path $args[0]) {
                 $Path = $args[0]
                 if ($args.Count -ge 2 -and $args[1] -as [int]) {
                     $Depth = $args[1]
                 }
+            } elseif ($args[0] -as [int]) {
+                $Depth = $args[0]
             }
         }
-        
+
         Write-Host "Executing enumeration script..."
         Write-Host "Enumerating directory: $Path with depth $Depth"
-        Run-ScriptFromURL "https://raw.githubusercontent.com/fkxdr/fkmde/refs/heads/main/additional/enum.ps1"
+        Run-ScriptFromURL "https://raw.githubusercontent.com/fkxdr/fkmde/refs/heads/main/additional/enum.ps1" $Path $Depth
     }
     default {
         Write-Host "Invalid argument. Use --kill or --enum <path> [depth]."
