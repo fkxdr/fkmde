@@ -1,5 +1,7 @@
 param (
-    [string]$Action
+    [string]$Action,
+    [string]$Path = "C:\Windows",  # Default path for --enum
+    [int]$Depth = 1  # Default depth if not provided
 )
 
 $banner = @'
@@ -326,8 +328,8 @@ if (-not $Action) {
 
 param (
     [string]$Action,
-    [string]$Path = "C:\Windows",  # Default path for --enum
-    [int]$Depth = 1  # Default depth if not provided for --enum
+    [string]$Path = "C:\Windows",
+    [int]$Depth = 1
 )
 
 # Function to execute external scripts in /additional repo
@@ -341,21 +343,6 @@ function Run-ScriptFromURL {
     }
     catch {
         Write-Host "Failed to download or run the script from $url"
-    }
-}
-
-# Function to disable or enable Windows Defender popups in --enum
-function Toggle-DefenderPopup {
-    param (
-        [switch]$Disable
-    )
-    $keyPath = "HKCU\Software\Microsoft\Windows\CurrentVersion\Notifications\Settings\Windows.Defender.SecurityCenter"
-    if ($Disable) {
-        Write-Host "Disabling Windows Defender popups..."
-        Reg.exe add $keyPath /v "Enabled" /t REG_DWORD /d "0" /f
-    } else {
-        Write-Host "Enabling Windows Defender popups..."
-        Reg.exe delete $keyPath /v "Enabled" /f
     }
 }
 
