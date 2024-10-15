@@ -1,3 +1,8 @@
+param (
+    [string]$Directory = "C:\Windows",  # Default to C:\Windows if not specified
+    [int]$Depth = 1  # Default depth if not specified
+)
+
 # Path to MpCmdRun.exe
 $MpPath = "C:\Program Files\Windows Defender\MpCmdRun.exe"
 
@@ -42,12 +47,21 @@ try {
         return
     }
 
+    # Counter for progress tracking
+    $processedFolders = 0
+    $totalFolders = $folders.Count
+
     foreach ($folder in $folders) {
         $folderPath = $folder.FullName
         $output = & $MpPath -Scan -ScanType 3 -File "$folderPath\|*" 2>&1
+
         if ($output -match "was skipped") {
             Write-Host "[+] Folder excluded: $folderPath"
         }
+
+        # Increment processed folder count and update progress
+        $processedFolders++
+        Write-Host -NoNewline "Processed $processedFolders / $totalFolders folders...`r"
     }
 }
 catch {
@@ -56,4 +70,4 @@ catch {
 
 # Re-enable Defender popups after scan
 Toggle-DefenderPopup
-Write-Host "Enumeration complete."
+Write-Host "`nEnumeration complete."
