@@ -48,12 +48,6 @@ try {
         $folderPath = $folder.FullName
         $output = & $MpPath -Scan -ScanType 3 -File "$folderPath\|*" 2>&1
 
-        if ($output -match "was skipped") {
-            # Display exclusion as requested
-            Write-Host "$folderPath" -ForegroundColor Yellow -NoNewline
-            Write-Host "    [KO] Exclusion found" -ForegroundColor Red
-        }
-
         # Increment processed folder count
         $processedFolders++
 
@@ -62,8 +56,14 @@ try {
         $blocks = [int]($processedFolders / $totalFolders * $progressBarWidth)
         $loadingBar = ('#' * $blocks) + ('-' * ($progressBarWidth - $blocks))
 
-        # Display the progress bar in the same line
+        # Display the progress bar
         Write-Host -NoNewline "`r[$loadingBar] $processedFolders of $totalFolders folders scanned ($([math]::Round($percentage, 2))%)"
+
+        if ($output -match "was skipped") {
+            # Add line break and display exclusion as requested
+            Write-Host "`n$folderPath" -ForegroundColor Yellow -NoNewline
+            Write-Host "    [KO] Exclusion found" -ForegroundColor Red
+        }
     }
 }
 catch {
