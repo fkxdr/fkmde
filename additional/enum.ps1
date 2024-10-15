@@ -61,8 +61,8 @@ try {
 
         if ($output -match "was skipped") {
             # Add line break and display exclusion as requested
-            Write-Host "`n$folderPath" -ForegroundColor Yellow -NoNewline
-            Write-Host "    [KO] Exclusion found" -ForegroundColor Red
+            Write-Host "[KO] `n$folderPath" -ForegroundColor Red -NoNewline
+
         }
     }
 }
