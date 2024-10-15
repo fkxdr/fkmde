@@ -325,13 +325,6 @@ if (-not $Action) {
     exit
 }
 
-
-param (
-    [string]$Action,
-    [string]$Path = "C:\Windows",
-    [int]$Depth = 1
-)
-
 # Function to execute external scripts in /additional repo
 function Run-ScriptFromURL {
     param (
@@ -353,6 +346,18 @@ switch ($Action) {
         Run-ScriptFromURL "https://raw.githubusercontent.com/fkxdr/fkmde/refs/heads/main/additional/kill.ps1"
     }
     '--enum' {
+        # Check if the first argument after --enum is numeric (depth), or if it's a valid path
+        if ($args.Count -ge 1) {
+            if ($args[0] -as [int]) {
+                $Depth = $args[0]
+            } elseif (Test-Path $args[0]) {
+                $Path = $args[0]
+                if ($args.Count -ge 2 -and $args[1] -as [int]) {
+                    $Depth = $args[1]
+                }
+            }
+        }
+        
         Write-Host "Executing enumeration script..."
         Write-Host "Enumerating directory: $Path with depth $Depth"
         Run-ScriptFromURL "https://raw.githubusercontent.com/fkxdr/fkmde/refs/heads/main/additional/enum.ps1"
