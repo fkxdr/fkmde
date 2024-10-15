@@ -14,13 +14,10 @@ function Toggle-DefenderPopup {
     }
 }
 
-# Check if MpCmdRun.exe exists
 if (-Not (Test-Path -Path $MpPath)) {
     Write-Host "Error: MpCmdRun.exe not found at $MpPath"
     return
 }
-
-# Check if the directory exists
 if (-Not (Test-Path -Path $Directory -PathType Container)) {
     Write-Host "Error: Directory '$Directory' not found."
     return
@@ -60,12 +57,9 @@ try {
         Write-Host -NoNewline "`r[$loadingBar] $processedFolders of $totalFolders folders scanned ($([math]::Round($percentage, 2))%) "
 
         if ($output -match "was skipped") {
-            # Show exclusion on a new line
-            Write-Host "`n[KO] $folderPath" -ForegroundColor Red
+            Write-Host "`n                                                     [KO] $folderPath" -ForegroundColor Red
         }
     }
-
-    # Make sure the final progress bar is displayed after the loop finishes
     Write-Host "`r[$loadingBar] $processedFolders of $totalFolders folders scanned ($([math]::Round($percentage, 2))%)" 
 }
 catch {
