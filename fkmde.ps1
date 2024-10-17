@@ -152,6 +152,18 @@ if (-not $Action) {
       } else {
           Write-Host "Behavior Monitoring :                                         [??] Disabled" -ForegroundColor DarkRed
       }
+
+      # Check Bitlocker
+      $bitlockerStatus = (New-Object -ComObject Shell.Application).NameSpace('C:').Self.ExtendedProperty('System.Volume.BitLockerProtection')
+      if ($bitlockerStatus -eq 1) {
+          Write-Host "Bitlocker Encrypted C Drive :                                 [OK] Enabled" -ForegroundColor Green
+      } elseif ($bitlockerStatus -eq 2) {
+          Write-Host "Bitlocker Encrypted C Drive :                                 [KO] Disabled" -ForegroundColor DarkRed
+      } elseif ($bitlockerStatus -eq 3) {
+          Write-Host "Bitlocker Encrypted C Drive :                                 [KO] Encryption in Progress" -ForegroundColor DarkRed
+      } else {
+          Write-Host "Bitlocker Encrypted C Drive :                                 [??] Other" -ForegroundColor DarkYellow
+      }
       
       # Check Microsoft Defender Exclusions
       Write-Host ""
