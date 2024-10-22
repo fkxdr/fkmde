@@ -354,28 +354,76 @@ function Run-ScriptFromURL {
     }
 }
 
+# Function to Toggle DefenderPopup
+function Toggle-DefenderPopup {
+    param (
+        [switch]$Disable
+    )
+    $keyPath = "HKCU\Software\Microsoft\Windows\CurrentVersion\Notifications\Settings\Windows.Defender.SecurityCenter"
+    if ($Disable) {
+        Reg.exe add $keyPath /v "Enabled" /t REG_DWORD /d "0" /f | Out-Null
+    } else {
+        Reg.exe delete $keyPath /v "Enabled" /f | Out-Null
+    }
+}
+
 # Handle the different options
 switch ($Action) {
     '--kill' {
         Write-Host "Executing kill script..."
         Run-ScriptFromURL "https://raw.githubusercontent.com/fkxdr/fkmde/refs/heads/main/additional/kill.ps1"
     }
-    '--enum' {
-        # Check if a directory path and depth are provided
-        if ($args.Count -ge 1) {
-            if (Test-Path $args[0]) {
-                $Directory = $args[0]
-                if ($args.Count -ge 2 -and $args[1] -as [int]) {
-                    $Depth = $args[1]
-                }
-            } elseif ($args[0] -as [int]) {
-                $Depth = $args[0]
-            }
+        '--enum' {
+        # Path to MpCmdRun.exe
+        $MpPath = "C:\Program Files\Windows Defender\MpCmdRun.exe"
+
+        if (-Not (Test-Path -Path $MpPath)) {
+            Write-Host "Error: MpCmdRun.exe not found at $MpPath"
+            return
         }
-        Run-ScriptFromURL "https://raw.githubusercontent.com/fkxdr/fkmde/refs/heads/main/additional/enum.ps1" $Path $Depth
+        if (-Not (Test-Path -Path $Directory -PathType Container)) {
+            Write-Host "Error: Directory '$Directory' not found."
+            return
+        }
+
+        Toggle-DefenderPopup -Disable
+        try {
+            $folders = Get-ChildItem -Path $Directory -Recurse -Directory -Depth ($Depth - 1) -ErrorAction SilentlyContinue | Sort-Object FullName
+            Write-Host "Found $($folders.Count) folders in $Directory within a depth of $Depth."
+    
+            if ($folders.Count -eq 0) {
+                Write-Host "No folders found."
+                Toggle-DefenderPopup
+                return
+            }
+            $processedFolders = 0
+            $totalFolders = $folders.Count
+            $progressBarWidth = 50  # Width of the loading bar
+            foreach ($folder in $folders) {
+                $folderPath = $folder.FullName
+                $output = & $MpPath -Scan -ScanType 3 -File "$folderPath\|*" 2>&1
+                $processedFolders++
+                $percentage = ($processedFolders / $totalFolders) * 100
+                $blocks = [int]($processedFolders / $totalFolders * $progressBarWidth)
+                $loadingBar = ('#' * $blocks) + ('-' * ($progressBarWidth - $blocks))
+                Write-Host -NoNewline "`r[$loadingBar] $processedFolders of $totalFolders folders scanned ($([math]::Round($percentage, 2))%) "
+
+                if ($output -match "was skipped") {
+                    Write-Host "`n                                                     [KO] $folderPath" -ForegroundColor Red
+                }
+            }
+
+            Write-Host "`r[$loadingBar] $processedFolders of $totalFolders folders scanned ($([math]::Round($percentage, 2))%)"
+
+        }
+        catch {
+            Write-Host "`nError occurred during folder enumeration or scan: $_"
+        }
+
+        Toggle-DefenderPopup
     }
+
     default {
         Write-Host "Invalid argument. Use --kill or --enum <path> [depth]."
     }
 }
- 
