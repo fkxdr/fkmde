@@ -37,6 +37,17 @@ if (-not $Action) {
       $DefenderStatus = Get-MpComputerStatus
       Write-Host "Antivirus Engine Version :                                    $($DefenderStatus.AMEngineVersion )" -ForegroundColor Green
       Write-Host "Antivirus Product Version :                                   $($DefenderStatus.AMProductVersion)" -ForegroundColor Green
+      
+      # Checking AMRunningMode
+      $AMRunningMode = $DefenderStatus.AMRunningMode
+      if ($AMRunningMode -eq "Normal" -or $AMRunningMode -eq "EDR Blocked") {
+          Write-Host "Antivirus Active Mode :                                       [OK] Enabled" -ForegroundColor Green
+      } elseif ($AMRunningMode -eq "Passive" -or $AMRunningMode -eq "SxS Passive Mode") {
+          Write-Host "Antivirus Active Mode :                                       [KO] $AMRunningMode" -ForegroundColor DarkRed
+      } else {
+          Write-Host "Antivirus Active Mode :                                       [??] Unknown - $AMRunningMode" -ForegroundColor DarkYellow
+      }
+      
       Write-Host ""
       try {
           if ($defenderStatus.RealTimeProtectionEnabled -eq $true) {
@@ -50,15 +61,6 @@ if (-not $Action) {
           $RealTimeProtectionDisabled = $true
       }
 
-      # Checking AMRunningMode
-      $AMRunningMode = $DefenderStatus.AMRunningMode
-      if ($AMRunningMode -eq "Normal" -or $AMRunningMode -eq "EDR Blocked") {
-          Write-Host "Defender Antivirus Active Mode :                              [OK] Enabled" -ForegroundColor Green
-      } elseif ($AMRunningMode -eq "Passive" -or $AMRunningMode -eq "SxS Passive Mode") {
-          Write-Host "Defender Antivirus Active Mode :                              [KO] $AMRunningMode" -ForegroundColor DarkRed
-      } else {
-          Write-Host "Defender Antivirus Active Mode :                              [??] Unknown - $AMRunningMode" -ForegroundColor DarkYellow
-      }
       
       # MDE Sensor status
       try {
