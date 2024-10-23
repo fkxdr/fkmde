@@ -349,7 +349,7 @@ if (-not $Action) {
                   Write-Host "ASR Rules Bypass:                                             [OK] No ASR rules were bypassed" -ForegroundColor Green
               }
           } catch {
-              # No ASR Rules in event logs
+              Write-Host "ASR Rules Bypass:                                             [OK] No ASR rules were bypassed" -ForegroundColor Green
           }
       }
     exit
