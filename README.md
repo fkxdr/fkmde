@@ -26,7 +26,7 @@ fkmde.ps1 --enum <path> [depth]
   
 Note: The scripts are not directly embedded in `fkmde`. Instead, they are loaded dynamically to minimize detection by Defender when the tool is used solely for enumeration purposes.
 
-![image](https://github.com/user-attachments/assets/42deaaa1-57e9-40c5-819d-5d45f15f2fa7)
+![image](https://github.com/user-attachments/assets/3e6c7f85-f1fd-448a-82aa-cc047828d0be)
 
 ![image](https://github.com/user-attachments/assets/4e13d1b7-ad7f-44aa-9f88-8d5961eefba5)
 
