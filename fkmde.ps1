@@ -53,11 +53,11 @@ if (-not $Action) {
       # Checking AMRunningMode
       $AMRunningMode = $DefenderStatus.AMRunningMode
       if ($AMRunningMode -eq "Normal" -or $AMRunningMode -eq "EDR Blocked") {
-          Write-Host "Defender Mode :                                               [OK] Enabled" -ForegroundColor Green
+          Write-Host "Defender Antivirus Active Mode :                              [OK] Enabled" -ForegroundColor Green
       } elseif ($AMRunningMode -eq "Passive" -or $AMRunningMode -eq "SxS Passive Mode") {
-          Write-Host "Defender Mode :                                               [KO] $AMRunningMode" -ForegroundColor DarkRed
+          Write-Host "Defender Antivirus Active Mode :                              [KO] $AMRunningMode" -ForegroundColor DarkRed
       } else {
-          Write-Host "Defender Mode :                                               [??] Unknown - $AMRunningMode" -ForegroundColor DarkYellow
+          Write-Host "Defender Antivirus Active Mode :                              [??] Unknown - $AMRunningMode" -ForegroundColor DarkYellow
       }
       
       # MDE Sensor status
