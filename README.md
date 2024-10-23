@@ -28,6 +28,8 @@ Note: The scripts are not directly embedded in `fkmde`. Instead, they are loaded
 
 ![image](https://github.com/user-attachments/assets/4fd4b81f-c8a0-4a35-a4f8-2a688df8c5a8)
 
+![image](https://github.com/user-attachments/assets/f722aaed-7dec-47ac-92a4-344cbcd5a7d7)
+
 ![image](https://github.com/user-attachments/assets/82f87057-d573-43ce-8745-0382374b5dd0)
 
 ![image](https://github.com/user-attachments/assets/dd051244-e1aa-46aa-a0d5-0bd0298a234a)
