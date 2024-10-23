@@ -164,6 +164,24 @@ if (-not $Action) {
       } else {
           Write-Host "Bitlocker Encrypted C Drive :                                 [??] Other" -ForegroundColor DarkYellow
       }
+
+      # Check Memory Integrity when Admin
+      if (IsAdmin) {
+          try {
+              if (Test-Path "HKLM:\SYSTEM\CurrentControlSet\Control\DeviceGuard\Scenarios\HypervisorEnforcedCodeIntegrity") {
+                  $hvciStatus = (Get-ItemProperty "HKLM:\SYSTEM\CurrentControlSet\Control\DeviceGuard\Scenarios\HypervisorEnforcedCodeIntegrity").Enabled
+                  if ($hvciStatus -eq 1) {
+                      Write-Host "Memory Integrity :                                            [OK] Enabled" -ForegroundColor Green
+                  } else {
+                      Write-Host "Memory Integrity :                                            [KO] Disabled" -ForegroundColor DarkRed
+                  }
+              } else {
+                  Write-Host "Memory Integrity :                                            [??] Missing Value" -ForegroundColor DarkYellow
+              }
+          } catch {
+              Write-Host "Memory Integrity :                                            [??] Missing Value" -ForegroundColor DarkYellow
+          }
+      }    
       
       # Check Microsoft Defender Exclusions
       Write-Host ""
