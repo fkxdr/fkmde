@@ -246,7 +246,7 @@ if (-not $Action) {
       
       # Bypass locked Exclusions by checking in Windows Events 5007 if not Admin
       if (-not (IsAdmin)) {
-          Write-Host "Missing permissions. Attempting to bypass exclusion list..."
+          Write-Host "Missing permissions. Use --enum to bypass with MpCmdRun.exe. Attempting to bypass exclusion list (EventID 5007) ..."
           $LogName = "Microsoft-Windows-Windows Defender/Operational"
           $EventID = 5007
           $Pattern = "HKLM\\SOFTWARE\\Microsoft\\Windows Defender\\Exclusions\\Paths\\([^`"]+)"
@@ -340,7 +340,7 @@ if (-not $Action) {
       
       # Attempting to bypass ASR rules 
       if (-not (IsAdmin)) {
-          Write-Host "Missing permissions. Attempting to bypass ASR rules..."
+          Write-Host "Missing permissions. Attempting to bypass ASR rules (EventID 1121) ..."
           $LogName = "Microsoft-Windows-Windows Defender/Operational"
           $EventID = 1121
           $displayedRules = @{}
