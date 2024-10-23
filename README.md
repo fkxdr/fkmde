@@ -39,6 +39,7 @@ Note: The scripts are not directly embedded in `fkmde`. Instead, they are loaded
 - Review if EDR is running Passive or Block
 - BYOVD EDR Kill
 - Review Smartscreen
+- Markdown Outputs
 
 ## Disclaimer
 This tool is intended for educational and security research purposes only. The author is not responsible for misuse or for any damage that may occur from using this tool. It is the end user's responsibility to comply with all applicable laws and regulations. The use of this tool against targets without prior mutual consent is illegal.
