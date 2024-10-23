@@ -427,7 +427,7 @@ switch ($Action) {
                 Write-Host -NoNewline "`r[$loadingBar] $processedFolders of $totalFolders folders scanned ($([math]::Round($percentage, 2))%) "
 
                 if ($output -match "was skipped") {
-                    Write-Host "`n                                                     [KO] $folderPath" -ForegroundColor Red
+                    Write-Host "`n                                                     [KO] $folderPath" -ForegroundColor DarkRed
                 }
             }
 
