@@ -359,10 +359,10 @@ if (-not $Action) {
                       }
                   }
               } else {
-                  Write-Host "ASR Rules Bypass:                                             [OK] No ASR rules were bypassed" -ForegroundColor Green
+                  Write-Host "ASR Rules Bypass:                                             [OK] No ASR rules were found" -ForegroundColor Green
               }
           } catch {
-              Write-Host "ASR Rules Bypass:                                             [OK] No ASR rules were bypassed" -ForegroundColor Green
+              Write-Host "ASR Rules Bypass:                                             [OK] No ASR rules were found" -ForegroundColor Green
           }
       }
     exit
