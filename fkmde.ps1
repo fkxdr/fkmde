@@ -153,18 +153,6 @@ if (-not $Action) {
           Write-Host "Behavior Monitoring :                                         [??] Disabled" -ForegroundColor DarkRed
       }
 
-      # Check Bitlocker
-      $bitlockerStatus = (New-Object -ComObject Shell.Application).NameSpace('C:').Self.ExtendedProperty('System.Volume.BitLockerProtection')
-      if ($bitlockerStatus -eq 1) {
-          Write-Host "Bitlocker Encrypted C Drive :                                 [OK] Enabled" -ForegroundColor Green
-      } elseif ($bitlockerStatus -eq 2) {
-          Write-Host "Bitlocker Encrypted C Drive :                                 [KO] Disabled" -ForegroundColor DarkRed
-      } elseif ($bitlockerStatus -eq 3) {
-          Write-Host "Bitlocker Encrypted C Drive :                                 [KO] Encryption in Progress" -ForegroundColor DarkRed
-      } else {
-          Write-Host "Bitlocker Encrypted C Drive :                                 [??] Other" -ForegroundColor DarkYellow
-      }
-
       # Check Memory Integrity
       try {
           if (Test-Path "HKLM:\SYSTEM\CurrentControlSet\Control\DeviceGuard\Scenarios\HypervisorEnforcedCodeIntegrity") {
@@ -181,6 +169,17 @@ if (-not $Action) {
           Write-Host "Memory Integrity :                                            [??] Other" -ForegroundColor DarkYellow
       }
 
+      # Check Bitlocker
+      $bitlockerStatus = (New-Object -ComObject Shell.Application).NameSpace('C:').Self.ExtendedProperty('System.Volume.BitLockerProtection')
+      if ($bitlockerStatus -eq 1) {
+          Write-Host "Bitlocker Encrypted C Drive :                                 [OK] Enabled" -ForegroundColor Green
+      } elseif ($bitlockerStatus -eq 2) {
+          Write-Host "Bitlocker Encrypted C Drive :                                 [KO] Disabled" -ForegroundColor DarkRed
+      } elseif ($bitlockerStatus -eq 3) {
+          Write-Host "Bitlocker Encrypted C Drive :                                 [KO] Encryption in Progress" -ForegroundColor DarkRed
+      } else {
+          Write-Host "Bitlocker Encrypted C Drive :                                 [??] Other" -ForegroundColor DarkYellow
+      }
       
       # Check Microsoft Defender Exclusions
       Write-Host ""
@@ -346,6 +345,8 @@ if (-not $Action) {
                           }
                       }
                   }
+              } else {
+                  Write-Host "ASR Rules Bypass:                                             [OK] No ASR rules were bypassed" -ForegroundColor Green
               }
           } catch {
               # No ASR Rules in event logs
