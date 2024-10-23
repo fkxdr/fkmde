@@ -38,7 +38,7 @@ if (-not $Action) {
       Write-Host "Antivirus Engine Version :                                    $($DefenderStatus.AMEngineVersion )" -ForegroundColor Green
       Write-Host "Antivirus Product Version :                                   $($DefenderStatus.AMProductVersion)" -ForegroundColor Green
       
-      # Checking AMRunningMode
+      # AMRunningMode Status
       $AMRunningMode = $DefenderStatus.AMRunningMode
       if ($AMRunningMode -eq "Normal" -or $AMRunningMode -eq "EDR Blocked") {
           Write-Host "Antivirus Active Mode :                                       [OK] Enabled" -ForegroundColor Green
@@ -47,7 +47,8 @@ if (-not $Action) {
       } else {
           Write-Host "Antivirus Active Mode :                                       [??] Unknown - $AMRunningMode" -ForegroundColor DarkYellow
       }
-      
+
+      # Real-Time Protection Settings
       Write-Host ""
       try {
           if ($defenderStatus.RealTimeProtectionEnabled -eq $true) {
