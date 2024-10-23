@@ -42,12 +42,22 @@ if (-not $Action) {
           if ($defenderStatus.RealTimeProtectionEnabled -eq $true) {
               Write-Host "Real-Time Protection :                                        [OK] Enabled" -ForegroundColor Green
           } else {
-              Write-Host "[6] Real-Time Protection :                                        [KO] $($DefenderStatus.RealTimeProtectionEnabled)" -ForegroundColor DarkRed
+              Write-Host "Real-Time Protection :                                        [KO] $($DefenderStatus.RealTimeProtectionEnabled)" -ForegroundColor DarkRed
               $RealTimeProtectionDisabled = $true
           }
       } catch [System.Exception] {
-          Write-Host "[E] Real-Time Protection :                                        [??] The status is unknown." -ForegroundColor DarkYellow
+          Write-Host "Real-Time Protection :                                        [??] The status is unknown." -ForegroundColor DarkYellow
           $RealTimeProtectionDisabled = $true
+      }
+
+      # Checking AMRunningMode
+      $AMRunningMode = $DefenderStatus.AMRunningMode
+      if ($AMRunningMode -eq "Normal" -or $AMRunningMode -eq "EDR Blocked") {
+          Write-Host "Defender Mode :                                               [OK] Enabled" -ForegroundColor Green
+      } elseif ($AMRunningMode -eq "Passive" -or $AMRunningMode -eq "SxS Passive Mode") {
+          Write-Host "Defender Mode :                                               [KO] $AMRunningMode" -ForegroundColor DarkRed
+      } else {
+          Write-Host "Defender Mode :                                               [??] Unknown - $AMRunningMode" -ForegroundColor DarkYellow
       }
       
       # MDE Sensor status
