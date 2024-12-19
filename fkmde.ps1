@@ -48,6 +48,27 @@ if (-not $Action) {
           Write-Host "Antivirus Active Mode :                                       [??] Unknown - $AMRunningMode" -ForegroundColor DarkYellow
       }
 
+      # Check Language Mode
+      Write-Host ""
+      $languageMode = $ExecutionContext.SessionState.LanguageMode
+      if ($languageMode -eq "FullLanguage") {
+          Write-Host "Powershell Language Mode :                                    [KO] Full Language" -ForegroundColor DarkRed
+      } elseif ($languageMode -eq "ConstrainedLanguage") {
+          Write-Host "Language Mode :                                               [OK] Constrained Language" -ForegroundColor Green
+      } else {
+          Write-Host "Language Mode :                                               [??] $languageMode" -ForegroundColor DarkYellow
+      }
+      
+      # Check Execution Policy
+      $executionPolicy = Get-ExecutionPolicy -Scope CurrentUser
+      if ($executionPolicy -eq "RemoteSigned" -or $executionPolicy -eq "Unrestricted") {
+          Write-Host "Execution Policy :                                            [KO] $executionPolicy" -ForegroundColor DarkRed
+      } elseif ($executionPolicy -eq "Restricted") {
+          Write-Host "Execution Policy :                                            [OK] Restricted" -ForegroundColor Green
+      } else {
+          Write-Host "Execution Policy :                                            [??] $executionPolicy" -ForegroundColor DarkYellow
+      }
+
       # Real-Time Protection Settings
       Write-Host ""
       try {
@@ -193,7 +214,7 @@ if (-not $Action) {
       } else {
           Write-Host "Bitlocker Encrypted C Drive :                                 [??] Other" -ForegroundColor DarkYellow
       }
-      
+
       # Check Microsoft Defender Exclusions
       Write-Host ""
       function Check-Exclusions {
