@@ -215,6 +215,18 @@ if (-not $Action) {
           Write-Host "Bitlocker Encrypted C Drive :                                 [??] Other" -ForegroundColor DarkYellow
       }
 
+      # Check Defender UI Accessibility
+      try {
+      $defenderUIEnabled = Test-Path "C:\\Program Files\\Windows Defender\\EppManifest.dll"
+      if ($defenderUIEnabled) {
+          Write-Host "Microsoft Defender UI :                                       [KO] Accessible" -ForegroundColor DarkRed
+      } else {
+          Write-Host "Microsoft Defender UI :                                       [OK] Disabled" -ForegroundColor Green
+      }
+      } catch {
+          Write-Host "Microsoft Defender UI :                                       [??] Unable to Determine" -ForegroundColor DarkYellow
+      }
+
       # Check Microsoft Defender Exclusions
       Write-Host ""
       function Check-Exclusions {
