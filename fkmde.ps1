@@ -83,7 +83,6 @@ if (-not $Action) {
           $RealTimeProtectionDisabled = $true
       }
 
-      
       # MDE Sensor status
       try {
           $MDEservice = Get-Service -Name "Sense" -ErrorAction Stop
@@ -402,11 +401,11 @@ if (-not $Action) {
       }
       
       Write-Host ""
-      Write-Host "CU soon. Bis bald. До скорой встречи." -ForegroundColor DarkGray
+      Write-Host "CU soon. Press enter to continue." -ForegroundColor DarkGray
       Read-Host
       exit
 }
-
+      
 # Function to execute external scripts in /additional repo
 function Run-ScriptFromURL {
     param (
