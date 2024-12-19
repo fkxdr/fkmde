@@ -155,6 +155,8 @@ if (-not $Action) {
           Write-Host "Tamper Protection Source :                                    [OK] Intune" -ForegroundColor Green
       } elseif ($TamperProtectionManage -eq "ATP") {
           Write-Host "Tamper Protection Source :                                    [OK] MDE Tenant" -ForegroundColor Green
+      } elseif ($TamperProtectionManage -eq "UI") {
+          Write-Host "Tamper Protection Source :                                    [KO] Manually via UI" -ForegroundColor Red
       } else {
           Write-Host "Tamper Protection Source :                                    [??] Unknown - $TamperProtectionManage"  -ForegroundColor DarkYellow
       }
