@@ -400,9 +400,6 @@ if (-not $Action) {
               Write-Host "ASR Rules Bypass:                                             [OK] No ASR rules were found" -ForegroundColor Green
           }
       }
-    Write-Host ""
-    Read-Host "Press Enter to exit" -ForegroundColor DarkGray
-    exit
 }
 
 # Function to execute external scripts in /additional repo
