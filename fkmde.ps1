@@ -402,7 +402,8 @@ if (-not $Action) {
       }
       
       Write-Host ""
-      Read-Host "Press Enter to exit" -ForegroundColor DarkGray
+      Write-Host "CU soon. Bis bald. До скорой встречи." -ForegroundColor DarkGray
+      Read-Host
       exit
 }
 
