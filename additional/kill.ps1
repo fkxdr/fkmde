@@ -48,7 +48,7 @@ if (IsAdmin) {
             "|| |||A r d h  e s a  e s  ic os ft D f  d    i le t y   t   ro ec  o  s i  in  in o d rk e   ||||||",
             "|  |||  r d    e s a  e    ic  s f    f  d    i    t y   t      e   o  s    in  in o   r  e   |||| |",
             "    ||    d    e      e          f            i          t             s           o          |||   ",
-            "    |                                                                                         ||    ",
+            "    |                                                                                         ||    "
         )
 
         foreach ($line in $lines) {
