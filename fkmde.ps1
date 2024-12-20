@@ -451,7 +451,7 @@ switch ($Action) {
                 Write-Host "Executing kill.ps1 from $destination..."
                 
                 # Execute in the same process to preserve privileges
-                $null = Start-Process -FilePath "powershell.exe" -ArgumentList "-ExecutionPolicy Bypass -NoProfile -File `"$destination`"" -Wait -WindowStyle Hidden
+                powershell -NoProfile -ExecutionPolicy Bypass -File $destination
             } catch {
                 Write-Host "Failed to download or execute kill.ps1: $_" -ForegroundColor DarkRed
             }
