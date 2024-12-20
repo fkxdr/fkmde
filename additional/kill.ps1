@@ -82,4 +82,6 @@ if (IsAdmin) {
     } else {
         Write-Host "Defender Kill    :                                            [??] Unable to kill Defender" -ForegroundColor DarkYellow
     }
+} else {
+    Write-Host "Defender Kill    :                                            [??] Missing Privileges" -ForegroundColor DarkYellow
 }
