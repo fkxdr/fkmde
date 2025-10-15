@@ -29,6 +29,23 @@ fkmde.ps1 --kill <path>              # Specify a directory for the script to dow
 > [!NOTE]
 > Any scripts tampering with the defender are not directly embedded in `fkmde`. Instead, they are loaded dynamically to minimize detection by Defender for Endpoint when the tool is used solely for enumeration purposes.
 
+The script can also be run with and without parameterized modes directly from github.
+
+```powershell
+  // basic method with iex
+  Invoke-Expression (New-Object Net.WebClient).DownloadString('https://raw.githubusercontent.com/fkxdr/fkmde/refs/heads/main/fkmde.ps1')
+
+  // parameterized mode with iex and irm
+  Invoke-Expression "& { $(Invoke-RestMethod https://raw.githubusercontent.com/fkxdr/fkmde/refs/heads/main/fkmde.ps1) } --enum C:\Windows 3"
+```
+
+> By default, the PowerShell [execution policy](https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_execution_policies) is set to `Restricted` on clients, and `RemoteSigned` on servers, when a new `powershell.exe` process is started. These policies block the execution of (unsigned) scripts, but they can be overriden within the current scope. However, this trick does not work when the execution policy is enforced through a GPO. In this case, after starting a new PowerShell session, you can load the script with the second command.
+
+```powershell
+Set-ExecutionPolicy Bypass -Scope Process -Force
+Get-Content .\fkmde.ps1 | Out-String | Invoke-Expression
+```
+
 ![image](https://github.com/user-attachments/assets/4fd4b81f-c8a0-4a35-a4f8-2a688df8c5a8)
 
 ![image](https://github.com/user-attachments/assets/f722aaed-7dec-47ac-92a4-344cbcd5a7d7)
