@@ -56,6 +56,32 @@ Get-Content .\fkmde.ps1 | Out-String | Invoke-Expression
 
 ![image](https://github.com/user-attachments/assets/dd051244-e1aa-46aa-a0d5-0bd0298a234a)
 
+```mermaid
+flowchart TD
+    start((Microsoft Defender))
+    
+    start --> MDEENUM[Enumerate Defender settings]
+    MDEENUM --> |fkmde.ps1| MDEVULN[Identify vulnerable configurations]
+    MDEENUM --> |Windows UI| MDEVULN
+    
+    MDEVULN --> MDEVULNASR[ASR rules]
+    MDEVULNASR --> |officemacro32.docm| MDEASREXP[Exploit ASR misconfiguration]
+    MDEVULNASR --> |wmiprocess.ps1| MDEASREXP
+    
+    MDEVULN --> MDEEXCLUSION[Defender exclusions]
+    MDEEXCLUSION --> |fkmde.ps1| EXPLOITEXCL[Exploit exclusions]
+    MDEEXCLUSION --> |fkmde.ps1 --enum| EXPLOITEXCL[Exploit exclusions]
+    
+    MDEVULN --> MDEMISCONF[Tamper Protection]
+    MDEMISCONF --> |fkmde.ps1 --kill| MDEKILL[Kill Defender process]
+    
+    start --> MDEBYPASS[Attempt to bypass static Defender]
+    MDEBYPASS --> |ps1-obfuscator.ps1| MDEBYPASS2[Bypass Defender]
+    
+    start --> MDESSCR[Review Smart Screen settings]
+    MDESSCR --> |Test with URL| MDESSCRVULN[Exploit vulnerable Smart Screen]
+```
+
 ## Disclaimer
 This tool is intended for educational and security research purposes only. The author is not responsible for misuse or for any damage that may occur from using this tool. It is the end user's responsibility to comply with all applicable laws and regulations. The use of this tool against targets without prior mutual consent is illegal.
 
