@@ -10,6 +10,7 @@
 - **Exclusion Enumeration**: Allows for low privilege exclusion enumeration, without relying on event log bypass.
 - **Defender Tampering**: PendingFileRenameOperations + Junctions EDR Disable
 - **Defender Killing**: The script uses techniques similar to those used by Clop Ransomware to disable and evade Microsoft Defender.
+- **Defender Silencing**: Blocks MDE telemetry using Windows Firewall rules without killing the process.
 
 ## Usage
 
@@ -18,6 +19,8 @@ fkmde.ps1
 fkmde.ps1 --enum <path> [depth]
 fkmde.ps1 --kill                     # Run the script from URL
 fkmde.ps1 --kill <path>              # Specify a directory for the script to download & execute from
+fkmde.ps1 --silence                  # Block MDE telemetry via firewall rules
+fkmde.ps1 --unsilence                # Remove silence firewall rules
 ```
 
 - **`--kill` Parameter**  
@@ -25,6 +28,12 @@ fkmde.ps1 --kill <path>              # Specify a directory for the script to dow
 
 - **`--enum <path> [depth]` Parameter**  
   This parameter performs a comprehensive enumeration of directories by using `MpCmdRun.exe`, scanning for exclusions or misconfigurations without relying on event logs or admin permissions. The script dynamically disables Windows Defender popup notifications during execution to provide a seamless experience without alerting users. Upon completion, it safely re-enables the notifications.
+
+- **`--silence` Parameter**  
+  Blocks outbound traffic from MDE processes (MsSense.exe, SenseCncProxy.exe, MsMpEng.exe, MpDlpService.exe) using Windows Firewall rules. This prevents telemetry and alerts from reaching Microsoft's cloud console. Requires admin privileges. Use `--unsilence` to remove the rules.
+
+- **`--unsilence` Parameter**  
+  Removes the firewall rules created by `--silence`.
   
 > [!NOTE]
 > Any scripts tampering with the defender are not directly embedded in `fkmde`. Instead, they are loaded dynamically to minimize detection by Defender for Endpoint when the tool is used solely for enumeration purposes.
@@ -74,6 +83,9 @@ flowchart TD
     
     MDEVULN --> MDEMISCONF[Tamper Protection]
     MDEMISCONF --> |fkmde.ps1 --kill| MDEKILL[Kill Defender process]
+
+    MDEVULN --> MDESILENCE[Tamper Protection Enabled]
+    MDESILENCE --> |fkmde.ps1 --silence| MDEBLIND[Blind Defender telemetry]
     
     start --> MDEBYPASS[Attempt to bypass static Defender]
     MDEBYPASS --> |ps1-obfuscator.ps1| MDEBYPASS2[Bypass Defender]
@@ -90,3 +102,4 @@ This tool is intended for educational and security research purposes only. The a
 - [ViziosDe](https://raw.githubusercontent.com/ViziosDe/MDExclusionParser/main/Invoke-MDExclusionParser.ps1) - Privilege Bypassing through Windows Event 1121
 - [Friends Security](https://github.com/Friends-Security/SharpExclusionFinder) - Exclusions through MpCmdRun.exe
 - [rad9800](https://github.com/rad9800/FileRenameJunctionsEDRDisable) - PendingFileRenameOperations + Junctions EDR Disable
+- [CSIS TechBlog](https://medium.com/csis-techblog/silencing-microsoft-defender-for-endpoint-using-firewall-rules-3aa290f27f98) - Silencing MDE via firewall rules
