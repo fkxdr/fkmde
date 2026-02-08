@@ -4,14 +4,6 @@
 
 `fkmde` is a specialized powershell script designed to evaluate the configuration and operational security of Microsoft Defender for Endpoint (MDE). It aids security professionals, system administrators, and penetration testers in identifying potential vulnerabilities and misconfigurations that might be exploited in a real-world attack.
 
-## Features
-- **Defender Full Audit**: Quickly assesses the status of real-time protection, active/passive mode, tamper protection, bitlocker, memory integrity and exclusion settings to detect overly permissive rules that might allow malware to bypass scanning.
-- **Bypass Exclusions and ASR Rules**: Utilizes Event 1121 and 5007 to bypass the protected exclusions list in MDE.
-- **Exclusion Enumeration**: Allows for low privilege exclusion enumeration, without relying on event log bypass.
-- **Defender Tampering**: PendingFileRenameOperations + Junctions EDR Disable
-- **Defender Killing**: The script uses techniques similar to those used by Clop Ransomware to disable and evade Microsoft Defender.
-- **Defender Silencing**: Blocks MDE telemetry using Windows Firewall rules without killing the process.
-
 ## Usage
 
 ```powershell
@@ -20,7 +12,6 @@ fkmde.ps1 --enum <path> [depth]
 fkmde.ps1 --kill                     # Run the script from URL
 fkmde.ps1 --kill <path>              # Specify a directory for the script to download & execute from
 fkmde.ps1 --silence                  # Block MDE telemetry via firewall rules
-fkmde.ps1 --unsilence                # Remove silence firewall rules
 ```
 The script can also be run with and without parameterized modes directly from github.
 
