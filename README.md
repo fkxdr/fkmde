@@ -41,8 +41,6 @@ Get-Content .\fkmde.ps1 | Out-String | Invoke-Expression
 
 ![image](https://github.com/user-attachments/assets/d6ed731a-4737-46c8-91d0-506f49e65f4f)
 
-![image](https://github.com/user-attachments/assets/82f87057-d573-43ce-8745-0382374b5dd0)
-
 ![image](https://github.com/user-attachments/assets/dd051244-e1aa-46aa-a0d5-0bd0298a234a)
 
 ## Disclaimer
