@@ -274,7 +274,7 @@ if (-not $Action) {
               Write-Host "AppLocker Service (AppIDSvc) :                                [KO] $($applockerService.Status)" -ForegroundColor DarkRed
           }
       } catch {
-          Write-Host "AppLocker Service (AppIDSvc) :                                [KO] Not found / Not installed" -ForegroundColor DarkRed
+          Write-Host "AppLocker Service (AppIDSvc) :                                [KO] Not found / installed" -ForegroundColor DarkRed
       }
 
       # Enumerate AppLocker rules from registry (works without admin for GPO-deployed policies)
