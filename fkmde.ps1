@@ -216,6 +216,116 @@ if (-not $Action) {
           Write-Host "Bitlocker Encrypted C Drive :                                 [??] Other" -ForegroundColor DarkYellow
       }
 
+      # Check WDAC (Windows Defender Application Control) Policy
+      try {
+          $cipolicies = Get-CimInstance -ClassName Win32_DeviceGuard -Namespace root\Microsoft\Windows\DeviceGuard -ErrorAction Stop
+          $codeIntegrityStatus = $cipolicies.CodeIntegrityPolicyEnforcementStatus
+          $userModeStatus = $cipolicies.UsermodeCodeIntegrityPolicyEnforcementStatus
+
+          # 0 = Off, 1 = Audit, 2 = Enforced
+          $ciLabel = switch ($codeIntegrityStatus) { 0 { "[KO] Off" } 1 { "[??] Audit Mode" } 2 { "[OK] Enforced" } Default { "[??] Unknown ($codeIntegrityStatus)" } }
+          $ciColor = switch ($codeIntegrityStatus) { 2 { "Green" } 1 { "DarkYellow" } Default { "DarkRed" } }
+          Write-Host "WDAC Kernel Mode (CI) :                                       $ciLabel" -ForegroundColor $ciColor
+
+          $umciLabel = switch ($userModeStatus) { 0 { "[KO] Off" } 1 { "[??] Audit Mode" } 2 { "[OK] Enforced" } Default { "[??] Unknown ($userModeStatus)" } }
+          $umciColor = switch ($userModeStatus) { 2 { "Green" } 1 { "DarkYellow" } Default { "DarkRed" } }
+          Write-Host "WDAC User Mode (UMCI) :                                       $umciLabel" -ForegroundColor $umciColor
+
+          # Check for active WDAC policies (multiple policies support since Win10 1903)
+          $policyDir = "$env:windir\System32\CodeIntegrity\CiPolicies\Active"
+          if (Test-Path $policyDir) {
+              $activePolicies = Get-ChildItem -Path $policyDir -Filter "*.cip" -ErrorAction SilentlyContinue
+              if ($activePolicies.Count -gt 0) {
+                  Write-Host "WDAC Active Policies :                                        [OK] $($activePolicies.Count) policy file(s) deployed" -ForegroundColor Green
+                  foreach ($pol in $activePolicies) {
+                      Write-Host "  - $($pol.Name) ($([math]::Round($pol.Length / 1KB, 1)) KB)"
+                  }
+              } else {
+                  Write-Host "WDAC Active Policies :                                        [KO] No .cip policy files found" -ForegroundColor DarkRed
+              }
+          } else {
+              Write-Host "WDAC Active Policies :                                        [KO] Policy directory missing" -ForegroundColor DarkRed
+          }
+
+          # Check for legacy SIPolicy.p7b (single policy format)
+          $legacyPolicy = "$env:windir\System32\CodeIntegrity\SIPolicy.p7b"
+          if (Test-Path $legacyPolicy) {
+              Write-Host "WDAC Legacy Policy (SIPolicy.p7b) :                           [OK] Present" -ForegroundColor Green
+          }
+      } catch {
+          Write-Host "WDAC Policy :                                                 [??] Unable to query DeviceGuard WMI" -ForegroundColor DarkYellow
+      }
+
+      # Check for supplemental WDAC policy files that may weaken base policy
+      $supplementalDir = "$env:windir\System32\CodeIntegrity\CiPolicies\Active"
+      if (Test-Path $supplementalDir) {
+          $sipFiles = Get-ChildItem -Path $supplementalDir -Filter "*.cip" -ErrorAction SilentlyContinue
+          if ($sipFiles.Count -gt 1) {
+              Write-Host "WDAC Supplemental Policies :                                  [??] $($sipFiles.Count - 1) supplemental policy file(s) - review for weakening rules" -ForegroundColor DarkYellow
+          }
+      }
+
+      # Check AppLocker Policy
+      try {
+          $applockerService = Get-Service -Name "AppIDSvc" -ErrorAction Stop
+          if ($applockerService.Status -eq "Running") {
+              Write-Host "AppLocker Service (AppIDSvc) :                                [OK] Running" -ForegroundColor Green
+          } else {
+              Write-Host "AppLocker Service (AppIDSvc) :                                [KO] $($applockerService.Status)" -ForegroundColor DarkRed
+          }
+      } catch {
+          Write-Host "AppLocker Service (AppIDSvc) :                                [KO] Not found / Not installed" -ForegroundColor DarkRed
+      }
+
+      # Enumerate AppLocker rules from registry (works without admin for GPO-deployed policies)
+      $applockerRegPath = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\SrpV2"
+      $applockerCollections = @("Exe", "Msi", "Script", "Dll", "Appx")
+      $applockerConfigured = $false
+
+      foreach ($collection in $applockerCollections) {
+          $collPath = "$applockerRegPath\$collection"
+          if (Test-Path $collPath) {
+              $rules = Get-ChildItem -Path $collPath -ErrorAction SilentlyContinue
+              $ruleCount = $rules.Count
+              # Check enforcement mode: 0 = Audit, 1 = Enforce
+              try {
+                  $enforcement = (Get-ItemProperty -Path $collPath -Name "EnforcementMode" -ErrorAction Stop).EnforcementMode
+                  $enfLabel = if ($enforcement -eq 1) { "Enforce" } elseif ($enforcement -eq 0) { "Audit" } else { "Unknown" }
+              } catch {
+                  $enfLabel = "NotConfigured"
+              }
+
+              if ($ruleCount -gt 0) {
+                  $applockerConfigured = $true
+                  $color = if ($enfLabel -eq "Enforce") { "Green" } elseif ($enfLabel -eq "Audit") { "DarkYellow" } else { "DarkRed" }
+                  Write-Host "AppLocker $($collection.PadRight(6)) Rules :                                    [$enfLabel] $ruleCount rule(s)" -ForegroundColor $color
+              }
+          }
+      }
+
+      if (-not $applockerConfigured) {
+          Write-Host "AppLocker Rules :                                             [KO] No rules configured" -ForegroundColor DarkRed
+      }
+
+      # Check for AppLocker default allow rules (weak config indicator)
+      if ($applockerConfigured) {
+          $exePath = "$applockerRegPath\Exe"
+          if (Test-Path $exePath) {
+              $exeRules = Get-ChildItem -Path $exePath -ErrorAction SilentlyContinue
+              foreach ($rule in $exeRules) {
+                  try {
+                      $ruleValue = (Get-ItemProperty -Path $rule.PSPath -Name "Value" -ErrorAction Stop).Value
+                      if ($ruleValue -match "Action=`"Allow`"" -and $ruleValue -match "Everyone" -and $ruleValue -match "\*") {
+                          Write-Host "AppLocker Default Allow-All :                                  [KO] Exe collection has wildcard allow for Everyone" -ForegroundColor DarkRed
+                          break
+                      }
+                  } catch {}
+              }
+          }
+      }
+
+      Write-Host ""
+
       # Check Defender UI Accessibility
       try {
       $defenderUIEnabled = Test-Path "C:\\Program Files\\Windows Defender\\EppManifest.dll"
