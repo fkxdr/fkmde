@@ -28,7 +28,7 @@ The script can also be run with and without parameterized modes directly from gi
 - **`--silence` Parameter**  
   Blocks outbound traffic from MDE processes (MsSense.exe, SenseCncProxy.exe, MsMpEng.exe, MpDlpService.exe) using Windows Firewall rules. This prevents telemetry and alerts from reaching Microsoft's cloud console. Requires admin privileges. Use `--unsilence` to remove the rules.
 
-  - **`--kill` Parameter**  
+- **`--kill` Parameter**  
   This parameter triggers a script that implements techniques similar to those used by Clop Ransomware to disable and evade Microsoft Defender. The script is not hardcoded into `fkmde`, but dynamically fetched from an external source to avoid pre-execution detection. This should be used *only* in secure, isolated environments for research purposes. It is possible to specify a custom directory using the optional <path> argument to download and run the kill script.
   
 
