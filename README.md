@@ -39,8 +39,6 @@ Set-ExecutionPolicy Bypass -Scope Process -Force
 Get-Content .\fkmde.ps1 | Out-String | Invoke-Expression
 ```
 
-![image](https://github.com/user-attachments/assets/4fd4b81f-c8a0-4a35-a4f8-2a688df8c5a8)
-
 ![image](https://github.com/user-attachments/assets/f722aaed-7dec-47ac-92a4-344cbcd5a7d7)
 
 ![image](https://github.com/user-attachments/assets/d6ed731a-4737-46c8-91d0-506f49e65f4f)
