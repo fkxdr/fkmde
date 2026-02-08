@@ -9,8 +9,8 @@
 ```powershell
 fkmde.ps1
 fkmde.ps1 --enum <path> [depth]
-fkmde.ps1 --silence                  # Block MDE telemetry via firewall rules
-fkmde.ps1 --kill <path>              # Specify a directory for the script to download & execute from
+fkmde.ps1 --silence
+fkmde.ps1 --kill <path>
 ```
 The script can also be run with and without parameterized modes directly from github.
 
